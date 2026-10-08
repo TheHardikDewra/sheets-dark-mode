@@ -30,7 +30,7 @@ WHAT GOES DARK
 
 YOUR CALL
 • Four themes: Graphite, Midnight (blue-black), OLED (true black) and Dim (soft grey)
-• Alt+Shift+D turns dark mode on or off without a reload
+• Alt+Shift+D (Option+Shift+D on a Mac) turns dark mode on or off without a reload
 • Keep one sheet light while the rest go dark, or follow your computer's appearance
 • Any font installed on your computer, in cells, charts and menus. Monospace cells keep theirs
 
@@ -95,7 +95,7 @@ certifications:
 ## Test instructions (optional field for reviewers)
 
 ```
-No account or setup needed beyond any Google account. Open any Google Sheet (for example https://sheets.new). The sheet loads dark. Alt+Shift+D turns dark mode off and on. The toolbar popup switches between the four themes and can keep the current sheet light.
+No account or setup needed beyond any Google account. Open any Google Sheet (for example https://sheets.new). The sheet loads dark. Alt+Shift+D (Option+Shift+D on a Mac) turns dark mode off and on. The toolbar popup switches between the four themes and can keep the current sheet light.
 ```
 
 ## Hardik's steps (the parts only you can do)

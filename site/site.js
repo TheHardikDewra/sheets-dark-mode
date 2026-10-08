@@ -72,6 +72,28 @@
     }, null, '0px 0px -30% 0px');
   }
 
+  // ---------- footer wordmark: sized to fill the column exactly, rises in once ----------
+  const mark = $('.foot-mark .fit');
+  if (mark) {
+    let lastWidth = 0;
+    const fit = () => {
+      const box = mark.parentElement.clientWidth;
+      if (!box || box === lastWidth) return;
+      lastWidth = box;
+      mark.style.fontSize = '100px';
+      const w = mark.getBoundingClientRect().width;
+      // the trailing negative letter-spacing is inside the measured width, not the ink: add it back
+      if (w) mark.style.fontSize = (100 * box / (w + 5.5)).toFixed(2) + 'px';
+    };
+    fit();
+    if (document.fonts) document.fonts.ready.then(() => { lastWidth = 0; fit(); });
+    if ('ResizeObserver' in window) new ResizeObserver(fit).observe(mark.parentElement);
+    if (motion) {
+      mark.style.transform = 'translateY(100%)';
+      inView(mark.parentElement, () => { mark.style.transition = 'transform 1.1s var(--ease)'; mark.style.transform = 'none'; }, null, '0px 0px -4% 0px');
+    }
+  }
+
   if (!D) return; // without data.js the demos stay as plain text
 
   // ---------- demo sheets ----------
@@ -325,6 +347,14 @@
   }
 
   // ---------- 6. Alt+Shift+D, on the demo and for real ----------
+  // Chrome maps Alt to the Option key on a Mac, so Mac visitors see the keys they actually press.
+  const isMac = /mac|iphone|ipad|ipod/i.test((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent);
+  if (isMac) {
+    $$('[data-combo]').forEach((e) => { e.textContent = 'Option+Shift+D'; });
+    const alt = $('.caps [data-k="alt"]'), shift = $('.caps [data-k="shift"]');
+    if (alt) alt.textContent = '⌥ Option';
+    if (shift) shift.textContent = '⇧ Shift';
+  }
   const toggleApp = apps.toggle, caps = $$('.caps kbd'), keyState = $('[data-key-state]');
   let keyLoop = 0;
   async function flip() {

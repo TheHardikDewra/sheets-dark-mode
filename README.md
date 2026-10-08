@@ -26,7 +26,7 @@ readable on whatever cell it sits on.
 | **Four themes** | Graphite (neutral), Midnight (blue-black), OLED (true black), Dim (soft grey). |
 | **Your font** | Type any font installed on your computer into the popup. Cells, charts, menus and dialogs use it on your screen; monospace cells keep theirs, and the file never changes. |
 | **Per sheet** | Keep one sheet light while the rest go dark, or follow your computer's appearance. |
-| **Shortcut** | `Alt+Shift+D` toggles. No reload. |
+| **Shortcut** | `Alt+Shift+D` toggles, no reload. On a Mac that is `⌥ Option+Shift+D` (Chrome maps Alt to Option). |
 | **Private** | No analytics, no network requests, no access to your cell data. One permission: `storage`, for your settings. |
 
 ## Install (local, while it is in review)

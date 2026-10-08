@@ -87,6 +87,7 @@
   const parse = (s) => { const m = /rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?/.exec(s || ''); return m ? [+m[1], +m[2], +m[3], m[4] === undefined ? 1 : +m[4]] : null; };
   const luma = (c) => (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255;
   const SKIP = 'canvas, img, svg, video, iframe, [data-nightcell-skip], .docs-toolbar-color-menu-button-color-bar, .goog-palette-cell, [class*="color-bar"], [class*="swatch"]';
+  const SIDES = ['Top', 'Right', 'Bottom', 'Left'];
 
   function sweep(root) {
     if (!current.on || !root || root.nodeType !== 1) return;
@@ -102,6 +103,12 @@
       }
       const fg = parse(cs.color);
       if (fg && luma(fg) < 0.45 && !el.hasAttribute('data-nc-text')) el.setAttribute('data-nc-text', luma(fg) > 0.3 ? 'muted' : '1');
+      // Light hairlines (accordion rows, cards) read as white outlines on a dark surface.
+      if (!el.hasAttribute('data-nc-border') && SIDES.some((s) => {
+        if (!(parseFloat(cs['border' + s + 'Width']) > 0)) return false;
+        const c = parse(cs['border' + s + 'Color']);
+        return c && c[3] > 0.3 && luma(c) > 0.75;
+      })) el.setAttribute('data-nc-border', '1');
     }
   }
 
@@ -135,17 +142,27 @@
     new MutationObserver((muts) => {
       for (const m of muts) for (const n of m.addedNodes) if (n.nodeType === 1) { track(n); scheduleSweep(n); }
     }).observe(document.body, { childList: true });
-    // sidebars mount deep inside the editor: a cheap periodic check catches new ones
-    const seenSidebars = new WeakSet();
+    // Sidebars and dialogs render their tabs lazily (the chart editor's Customize tab, for one),
+    // so each one gets a subtree observer while it is open. They are small; the grid is never watched.
+    const deep = new MutationObserver((muts) => {
+      for (const m of muts) {
+        if (m.type === 'childList') { for (const n of m.addedNodes) if (n.nodeType === 1) scheduleSweep(n); }
+        else if (m.target.nodeType === 1 && !(m.attributeName || '').startsWith('data-nc')) scheduleSweep(m.target);
+      }
+    });
+    const adopted = new WeakSet();
+    const adopt = (el) => {
+      if (adopted.has(el)) return;
+      adopted.add(el);
+      deep.observe(el, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+      scheduleSweep(el);
+    };
     setInterval(() => {
       if (!current.on || document.hidden) return;
-      for (const el of document.querySelectorAll('[class*="sidebar"]:not([data-nc-swept])')) {
-        if (seenSidebars.has(el) || el.offsetParent === null) continue;
-        seenSidebars.add(el);
-        el.setAttribute('data-nc-swept', '1');
-        scheduleSweep(el);
+      for (const el of document.querySelectorAll('[class*="sidebar-container"], [role="complementary"], [role="dialog"], .modal-dialog, .docs-material-dialog')) {
+        if (el.offsetParent !== null && !el.closest('[id$="grid-table-container"]')) adopt(el);
       }
-    }, 2000);
+    }, 1500);
     scheduleSweep(document.body.querySelector('#docs-chrome'));
   }
 

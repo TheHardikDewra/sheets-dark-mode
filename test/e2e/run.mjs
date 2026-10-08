@@ -50,6 +50,23 @@ try {
   const tb = await page.evaluate(() => getComputedStyle(document.getElementById('docs-toolbar-wrapper')).backgroundColor);
   check('toolbar CSS applied', tb === 'rgb(36, 36, 36)', tb);
 
+  // safety net: a light pop-up the stylesheet has never seen is darkened, hairlines included
+  await page.evaluate(() => {
+    const d = document.createElement('div');
+    d.id = 'unknown-popup';
+    d.style.cssText = 'position:fixed;top:40px;left:40px;width:200px;padding:8px;background:#fff;color:#202124';
+    d.innerHTML = '<div id="unknown-row" style="border:1px solid #dadce0;padding:4px">Row</div>';
+    document.body.appendChild(d);
+  });
+  await sleep(800);
+  const net = await page.evaluate(() => {
+    const cs = (id) => getComputedStyle(document.getElementById(id));
+    return [cs('unknown-popup').backgroundColor, cs('unknown-row').color, cs('unknown-row').borderTopColor];
+  });
+  check('safety net darkens an unknown light pop-up', net[0] === 'rgb(36, 36, 36)' && net[1] === 'rgb(228, 228, 228)', net.slice(0, 2).join(' / '));
+  check('safety net darkens its light hairlines', net[2] === 'rgb(58, 58, 58)', net[2]);
+  await page.evaluate(() => document.getElementById('unknown-popup').remove());
+
   // popup: switch theme -> page follows and repaints (zoom nudge -> real resize)
   const paintsBefore = await page.evaluate(() => window.__paints);
   const popup = await browser.newPage();

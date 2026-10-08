@@ -318,13 +318,39 @@
   patch(window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype);
   patch(window.OffscreenCanvasRenderingContext2D && OffscreenCanvasRenderingContext2D.prototype);
 
+  // ---------- the in-cell editor: show it in the dark version of the cell it edits ----------
+  // Sheets paints the editor as DOM with inline colours (the cell's fill + text colour). We map them
+  // through the same grid roles and hand them to ui.css as custom properties.
+  function themeEditor(el) {
+    const set = (prop, val) => { if (el.style.getPropertyValue(prop) !== val) el.style.setProperty(prop, val); };
+    if (!state.on) { el.style.removeProperty('--nc-edit-bg'); el.style.removeProperty('--nc-edit-fg'); return; }
+    const bg = el.style.backgroundColor, fg = el.style.color;
+    if (bg && parseColor(bg)) set('--nc-edit-bg', remap('grid', 'bg', bg));
+    if (fg && parseColor(fg)) set('--nc-edit-fg', remap('grid', 'fg', fg));
+  }
+  const EDITOR = '.input-box, #waffle-rich-text-editor';
+  const editorObs = new MutationObserver((muts) => {
+    for (const m of muts) if (m.target.matches && m.target.matches(EDITOR)) themeEditor(m.target);
+  });
+  const watchEditor = (root) => {
+    if (!root || root.nodeType !== 1) return;
+    const hits = root.matches(EDITOR) ? [root] : [...root.querySelectorAll(EDITOR)];
+    for (const el of hits) { themeEditor(el); editorObs.observe(el, { attributes: true, attributeFilter: ['style'] }); }
+  };
+  const bootEditorWatch = () => {
+    watchEditor(document.body);
+    new MutationObserver((muts) => { for (const m of muts) for (const n of m.addedNodes) watchEditor(n); })
+      .observe(document.body, { childList: true });
+  };
+  if (document.body) bootEditorWatch(); else document.addEventListener('DOMContentLoaded', bootEditorWatch, { once: true });
+
   // ---------- talk to the isolated-world bridge ----------
   document.addEventListener('nightcell:set', (e) => {
     const next = pickState((e && e.detail) || {});
     const changed = Object.keys(next).some((k) => next[k] !== state[k]);
     Object.assign(state, next);
     applyRootAttrs();
-    if (changed) cache.clear();
+    if (changed) { cache.clear(); document.querySelectorAll(EDITOR).forEach(themeEditor); }
   });
 
   window.__nightcellEngine = { version: '1.0.0', state: () => ({ ...state }), remap };

@@ -231,7 +231,19 @@ html[data-nightcell="on"] .waffle-cell-input {
   color: var(--nc-text) !important;
   caret-color: var(--nc-text) !important;
 }
-html[data-nightcell="on"] .cell-input * { color: inherit; }
+html[data-nightcell="on"] .cell-input * { color: inherit !important; }
+/* the in-cell editor wears the dark version of its cell's colours (set by engine.js) */
+html[data-nightcell="on"] .input-box,
+html[data-nightcell="on"] #waffle-rich-text-editor {
+  background-color: var(--nc-edit-bg, var(--nc-bg)) !important;
+  color: var(--nc-edit-fg, var(--nc-text)) !important;
+  caret-color: var(--nc-edit-fg, var(--nc-text)) !important;
+}
+html[data-nightcell="on"] #waffle-rich-text-editor * { color: var(--nc-edit-fg, var(--nc-text)) !important; }
+/* chart editor tabs paint their own light surfaces */
+html[data-nightcell="on"] .docs-charts-editor,
+html[data-nightcell="on"] .docs-charts-editor-scroll-pane,
+html[data-nightcell="on"] [class*="docs-charts-editor-"][class*="-tab"] { background-color: var(--nc-raised) !important; color: var(--nc-text) !important; }
 
 /* ---------- sheet tabs + bottom bar ---------- */
 html[data-nightcell="on"] .docs-sheet-tab {
@@ -331,6 +343,8 @@ html[data-nightcell="on"] .docs-material-textinput {
   color: var(--nc-text) !important;
   border-color: var(--nc-border) !important;
 }
+/* combo-box inputs sit inside their own outlined box, so they take that box's fill */
+html[data-nightcell="on"] .docs-charts-editor-material-combo-box-input { background-color: transparent !important; }
 html[data-nightcell="on"] .jfk-button-standard,
 html[data-nightcell="on"] .goog-flat-menu-button,
 html[data-nightcell="on"] .jfk-button-default:not(.jfk-button-action) {
@@ -400,6 +414,7 @@ html[data-nightcell="on"] [data-nc-surface] {
   border-color: var(--nc-border) !important;
 }
 html[data-nightcell="on"] [data-nc-surface="input"] { background-color: var(--nc-input) !important; }
+html[data-nightcell="on"] [data-nc-border] { border-color: var(--nc-border) !important; }
 html[data-nightcell="on"] [data-nc-text] { color: var(--nc-text) !important; }
 html[data-nightcell="on"] [data-nc-text="muted"] { color: var(--nc-text-2) !important; }
 html[data-nightcell="on"] [data-nc-icon] { filter: var(--nc-icon-filter) !important; }

@@ -62,12 +62,21 @@ background.js                                Alt+Shift+D, and a 1% zoom nudge to
 ## Tests
 
 ```bash
-node --test test/engine.test.mjs
+node --test test/engine.test.mjs                               # colour maths + contrast
+node test/e2e/run.mjs <chrome-binary> <puppeteer-core-dir>     # the packaged extension, end to end
 ```
 
 The contrast test maps 20 common fills against 9 common text colours (180 pairs, including
 Sheets' own header blues and banding greys) and fails if any pair drops below WCAG AA (4.5:1).
 Current minimum: 5.5:1.
+
+The end-to-end test loads the real extension into Chrome for Testing against a local mock of
+the Sheets page and checks 20 things: the first paint is already dark, grid and chart colours,
+the toolbar stylesheet, the safety net on an unknown light pop-up, switching theme from the
+popup (with repaint and zoom restored), turning it off, and settings persistence.
+
+`scripts/dev-bundle.py` builds a single snippet (engine + stylesheet + safety net) that can be
+pasted into a Sheets tab's console to try a change live without reloading the extension.
 
 `test/demo-sheet.gs` is an Apps Script that builds a fake-data sheet with every hard case
 (dark and pastel fills, banding, colour scales, red negatives, checkboxes, chips, sparklines,

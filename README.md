@@ -1,0 +1,104 @@
+# Nightcell: a real dark mode for Google Sheets
+
+Google Sheets on the web still has no dark mode. The extensions that try to add one mostly
+slap `filter: invert(1)` on the page, so your cell colours turn into their opposites, images go
+negative, charts look radioactive, and the grid flashes white every time it redraws.
+
+Nightcell paints the dark theme **inside the grid's canvas**. Every colour Sheets draws is
+swapped for a dark-theme version at the moment it is drawn, and the hue is kept: a pastel
+yellow row becomes a deep amber row, red negatives stay red, and text is lifted until it is
+readable on whatever cell it sits on.
+
+<p align="center">
+  <img src="store/screenshot-1-grid.png" width="840" alt="Nightcell: a budget sheet in Graphite dark, coloured cells and charts intact">
+</p>
+
+## What you get
+
+| | |
+|---|---|
+| **Grid** | Cell fills keep their hue in a dark band. Text is lifted per colour, so every fill/text pair stays at 5.5:1 contrast or better (tested, see below). |
+| **Your colours** | Conditional-format scales, banding, colour-coded text, checkboxes, dropdown chips and sparklines all stay distinguishable. |
+| **Charts** | Backgrounds and labels go dark; series colours are kept as you chose them (or adapt them, your call). |
+| **Everything else** | Menus, toolbar, formula bar, sheet tabs, dialogs, sidebars, tooltips, comments. A safety net darkens any new pop-up Google ships before the stylesheet knows it. |
+| **Four themes** | Graphite (neutral), Midnight (blue-black), OLED (true black), Dim (soft grey). |
+| **Per sheet** | Keep one sheet light while the rest go dark, or follow your computer's appearance. |
+| **Shortcut** | `Alt+Shift+D` toggles. No reload. |
+| **Private** | No analytics, no network requests, no access to your cell data. One permission: `storage`, for your settings. |
+
+## Install (local, while it is in review)
+
+1. Download this repo (Code -> Download ZIP) and unzip it, or `git clone` it.
+2. Open `chrome://extensions` and switch on **Developer mode** (top right).
+3. Click **Load unpacked** and choose the `extension` folder.
+4. Open any Google Sheet. It is dark already; the moon icon in the toolbar has the settings.
+
+Works in Chrome 111+ and Chromium browsers that support Manifest V3 main-world content scripts
+(Edge, Brave, Arc, Vivaldi).
+
+## How it works
+
+```
+document_start ─┬─ engine.js (page world)    wraps CanvasRenderingContext2D draw calls
+                │                            fillRect / fill / fillText / stroke
+                │                            colour -> OKLCH -> dark-theme colour -> draw -> restore
+                ├─ ui.css                    Google's own UI, scoped to html[data-nightcell="on"]
+                └─ bridge.js (isolated)      settings from chrome.storage, mirrored to the page so
+                                             the next load is dark from the first frame
+background.js                                Alt+Shift+D, and a 1% zoom nudge to repaint the canvas
+```
+
+- **Roles, not inversion.** A colour means different things depending on what is drawn with it.
+  `fillRect` is a cell background, `fillText` is ink, `stroke` and hairline rects are grid lines,
+  and a coloured rect shorter than the row is a data mark (a sparkline bar). Each role has its
+  own mapping in OKLCH, so lightness flips where it should and hue never does.
+- **Two policies.** The cell grid adapts every colour. Charts and unknown canvases only flip
+  neutrals (white backgrounds, grey labels), so your series colours stay yours.
+- **No flash of white.** Settings are mirrored into the page's localStorage, so the engine knows
+  your theme synchronously at `document_start`, before Sheets paints anything.
+- **Repaint without reload.** Sheets only redraws its canvas on a real resize, so a theme change
+  nudges the tab zoom by 1% and back (Sheets' own zoom box is the fallback).
+
+## Tests
+
+```bash
+node --test test/engine.test.mjs
+```
+
+The contrast test maps 20 common fills against 9 common text colours (180 pairs, including
+Sheets' own header blues and banding greys) and fails if any pair drops below WCAG AA (4.5:1).
+Current minimum: 5.5:1.
+
+`test/demo-sheet.gs` is an Apps Script that builds a fake-data sheet with every hard case
+(dark and pastel fills, banding, colour scales, red negatives, checkboxes, chips, sparklines,
+merged cells, four chart types) for visual testing. All screenshots use that sheet.
+
+## Permissions and privacy
+
+- `storage`: saves your theme and per-sheet choices with `chrome.storage.sync`.
+- Host access to `https://docs.google.com/spreadsheets/*` only, to run the theme there.
+- Nightcell never reads, stores or sends your spreadsheet content. It makes no network requests
+  at all. See [PRIVACY.md](PRIVACY.md).
+
+## Known limits
+
+- Print and PDF export stay light (Google renders those on its servers).
+- Images and drawings inside cells are left as they are.
+- Add-on sidebars run in Google's sandboxed iframes on other domains and keep their own styling.
+- Google changes its UI often. The canvas engine does not depend on class names; the UI
+  stylesheet does, which is why a runtime safety net darkens unknown light pop-ups.
+
+## Project layout
+
+```
+extension/   the extension (load this folder unpacked)
+site/        landing page + privacy policy (deployed on Vercel)
+store/       Chrome Web Store listing copy and screenshots
+test/        engine tests + the fake-data demo sheet script
+scripts/     build the store zip
+design/      icon sources
+```
+
+## License
+
+MIT. Built by [Hardik Dewra](https://wedesignlandingpages.com).

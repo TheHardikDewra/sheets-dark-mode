@@ -1,0 +1,12 @@
+{
+  "name": "nightcell",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A real dark mode for Google Sheets (Chrome extension).",
+  "scripts": {
+    "test": "node --test test/engine.test.mjs",
+    "build": "zsh scripts/build-zip.sh",
+    "e2e": "node test/e2e/run.mjs \"$CHROME_FOR_TESTING\" \"$PUPPETEER_CORE_DIR\""
+  },
+  "license": "MIT"
+}

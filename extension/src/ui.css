@@ -1,0 +1,415 @@
+/*
+ * Nightcell UI theme for everything around the grid (menus, toolbar, formula bar, tabs,
+ * sidebars, dialogs). The grid itself is painted by engine.js. Everything is scoped to
+ * html[data-nightcell="on"], so turning Nightcell off restores Google's styles instantly.
+ */
+
+html[data-nightcell="on"] {
+  --nc-app: #181818;
+  --nc-bg: #1e1e1e;
+  --nc-raised: #242424;
+  --nc-input: #2a2a2a;
+  --nc-hover: #333333;
+  --nc-active: #3d3d3d;
+  --nc-border: #3a3a3a;
+  --nc-text: #e4e4e4;
+  --nc-text-2: #b4b4b4;
+  --nc-text-3: #8c8c8c;
+  --nc-accent: #a8c7fa;
+  --nc-accent-strong: #d3e3fd;
+  --nc-accent-bg: #0b3a75;
+  --nc-accent-bg-hover: #134a8f;
+  --nc-select: rgba(138, 180, 248, 0.22);
+  --nc-icon-filter: invert(0.88) hue-rotate(180deg) saturate(0.9);
+  color-scheme: dark;
+}
+html[data-nightcell="on"][data-nightcell-theme="midnight"] {
+  --nc-app: #141821;
+  --nc-bg: #1a1f29;
+  --nc-raised: #202633;
+  --nc-input: #262d3b;
+  --nc-hover: #2e3647;
+  --nc-active: #384154;
+  --nc-border: #333b4d;
+  --nc-text: #e2e6ef;
+  --nc-text-2: #aeb6c7;
+  --nc-text-3: #848ca0;
+}
+html[data-nightcell="on"][data-nightcell-theme="oled"] {
+  --nc-app: #000000;
+  --nc-bg: #0b0b0b;
+  --nc-raised: #121212;
+  --nc-input: #181818;
+  --nc-hover: #222222;
+  --nc-active: #2c2c2c;
+  --nc-border: #2a2a2a;
+}
+html[data-nightcell="on"][data-nightcell-theme="dim"] {
+  --nc-app: #26272b;
+  --nc-bg: #2b2d31;
+  --nc-raised: #313338;
+  --nc-input: #383a40;
+  --nc-hover: #404249;
+  --nc-active: #4a4c53;
+  --nc-border: #45474e;
+}
+
+/* ---------- page + main surfaces ---------- */
+html[data-nightcell="on"],
+html[data-nightcell="on"] body,
+html[data-nightcell="on"] #docs-chrome,
+html[data-nightcell="on"] #docs-header-container,
+html[data-nightcell="on"] #docs-header,
+html[data-nightcell="on"] .docs-titlebar-buttons,
+html[data-nightcell="on"] #docs-editor-container,
+html[data-nightcell="on"] #docs-editor,
+html[data-nightcell="on"] .grid-container,
+html[data-nightcell="on"] .grid-bottom-bar,
+html[data-nightcell="on"] #grid-bottom-bar,
+html[data-nightcell="on"] .docs-companion-app-switcher-container,
+html[data-nightcell="on"] .companion-app-switcher-container {
+  background-color: var(--nc-app) !important;
+  color: var(--nc-text) !important;
+}
+html[data-nightcell="on"] .row-headers-background,
+html[data-nightcell="on"] .column-headers-background,
+html[data-nightcell="on"] .grid-shim-bottom,
+html[data-nightcell="on"] .grid-shim-end-ltr,
+html[data-nightcell="on"] .grid-shim-end-rtl {
+  background-color: var(--nc-bg) !important;
+}
+/* never paint .grid-scrollable-wrapper / .fixed-table-container: they sit above the canvas */
+
+/* ---------- title + menubar ---------- */
+html[data-nightcell="on"] .docs-title-input,
+html[data-nightcell="on"] .docs-title-input-label-inner,
+html[data-nightcell="on"] #docs-title-widget,
+html[data-nightcell="on"] .docs-title-widget,
+html[data-nightcell="on"] #docs-menubar .menu-button,
+html[data-nightcell="on"] .docs-menubar .menu-button,
+html[data-nightcell="on"] .docs-title-save-label-text,
+html[data-nightcell="on"] .docs-title-save-label {
+  color: var(--nc-text) !important;
+  background-color: transparent !important;
+}
+html[data-nightcell="on"] .docs-title-input:hover,
+html[data-nightcell="on"] .docs-title-input:focus {
+  border-color: var(--nc-border) !important;
+  background-color: var(--nc-input) !important;
+}
+html[data-nightcell="on"] #docs-menubar .menu-button.goog-control-hover,
+html[data-nightcell="on"] #docs-menubar .menu-button.goog-control-open {
+  background-color: var(--nc-hover) !important;
+}
+
+/* share / tonal buttons in the title bar */
+html[data-nightcell="on"] #docs-titlebar-share-client-button .jfk-button,
+html[data-nightcell="on"] .scb-quick-actions-menu-button,
+html[data-nightcell="on"] .docs-titlebar-buttons [class*="FilledTonal-button"] {
+  background-color: var(--nc-accent-bg) !important;
+  color: var(--nc-accent-strong) !important;
+  border-color: transparent !important;
+}
+html[data-nightcell="on"] #docs-titlebar-share-client-button .jfk-button:hover,
+html[data-nightcell="on"] .scb-quick-actions-menu-button:hover,
+html[data-nightcell="on"] .docs-titlebar-buttons [class*="FilledTonal-button"]:hover {
+  background-color: var(--nc-accent-bg-hover) !important;
+}
+html[data-nightcell="on"] .scb-button-icon,
+html[data-nightcell="on"] .docs-titlebar-buttons .docs-icon-img {
+  filter: var(--nc-icon-filter);
+}
+
+/* ---------- toolbar ---------- */
+html[data-nightcell="on"] #docs-toolbar-wrapper,
+html[data-nightcell="on"] .docs-main-toolbars,
+html[data-nightcell="on"] #docs-toolbar,
+html[data-nightcell="on"] .docs-toolbar,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar {
+  background-color: var(--nc-raised) !important;
+  border-color: transparent !important;
+  color: var(--nc-text) !important;
+}
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-button,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-menu-button,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-combo-button,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-toggle-button,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-select,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-button-outer-box,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-button-inner-box,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-menu-button-outer-box,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-menu-button-inner-box,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-menu-button-caption,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-combo-button-caption,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-combo-button-outer-box,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-combo-button-inner-box {
+  background-color: transparent !important;
+  color: var(--nc-text) !important;
+  border-color: transparent !important;
+}
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-button-hover,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-menu-button-hover,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-combo-button-hover,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-toggle-button-hover,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-menu-button-open,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-combo-button-open {
+  background-color: var(--nc-hover) !important;
+}
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-button-checked,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-toggle-button-checked,
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-button-active {
+  background-color: var(--nc-accent-bg) !important;
+}
+html[data-nightcell="on"] #docs-toolbar-wrapper .goog-toolbar-separator,
+html[data-nightcell="on"] #docs-toolbar-wrapper .docs-toolbar-separator {
+  border-color: var(--nc-border) !important;
+  background-color: var(--nc-border) !important;
+}
+html[data-nightcell="on"] #docs-toolbar-wrapper input,
+html[data-nightcell="on"] .docs-omnibox-input,
+html[data-nightcell="on"] #docs-toolbar-wrapper .jfk-textinput,
+html[data-nightcell="on"] .docs-font-size-inc-dec-combobox input,
+html[data-nightcell="on"] #fontSizeSelect input {
+  background-color: var(--nc-input) !important;
+  color: var(--nc-text) !important;
+  border-color: var(--nc-border) !important;
+}
+html[data-nightcell="on"] .docs-omnibox-input::placeholder { color: var(--nc-text-3) !important; }
+
+/* toolbar + chrome icons are dark sprites: invert them, but never the colour swatch bars */
+html[data-nightcell="on"] #docs-chrome .docs-icon-img,
+html[data-nightcell="on"] #docs-chrome .docs-icon-img-container,
+html[data-nightcell="on"] #docs-chrome .goog-toolbar-menu-button-dropdown,
+html[data-nightcell="on"] #docs-chrome .goog-toolbar-combo-button-dropdown,
+html[data-nightcell="on"] #docs-chrome .docs-gm-arrow,
+html[data-nightcell="on"] #docs-chrome .docs-icon-down-arrow,
+html[data-nightcell="on"] #formula-bar .docs-icon-img,
+html[data-nightcell="on"] #grid-bottom-bar .docs-icon-img,
+html[data-nightcell="on"] .grid-bottom-bar .docs-icon-img,
+html[data-nightcell="on"] .goog-menu .docs-icon-img,
+html[data-nightcell="on"] .goog-menu .docs-icon-img-container,
+html[data-nightcell="on"] .goog-menu .goog-submenu-arrow,
+html[data-nightcell="on"] .docs-sheet-tab-dropdown,
+html[data-nightcell="on"] .docs-sheet-tab .docs-icon,
+html[data-nightcell="on"] .docs-sheet-button-icon,
+html[data-nightcell="on"] .waffle-name-box-dropdown,
+html[data-nightcell="on"] .name-box-dropdown .docs-icon-img {
+  filter: var(--nc-icon-filter) !important;
+}
+html[data-nightcell="on"] .docs-toolbar-color-menu-button-color-bar,
+html[data-nightcell="on"] [class*="color-bar"] {
+  filter: none !important;
+}
+
+/* ---------- formula bar + name box ---------- */
+html[data-nightcell="on"] #formula-bar-name-box-wrapper,
+html[data-nightcell="on"] .formula-bar-with-name-box-wrapper,
+html[data-nightcell="on"] #formula-bar,
+html[data-nightcell="on"] .formula-bar,
+html[data-nightcell="on"] #t-formula-bar-input,
+html[data-nightcell="on"] #t-formula-bar-input-container,
+html[data-nightcell="on"] .waffle-name-box-container,
+html[data-nightcell="on"] #t-name-box,
+html[data-nightcell="on"] .waffle-name-box,
+html[data-nightcell="on"] .name-box-dropdown,
+html[data-nightcell="on"] #t-name-box-dropdown {
+  background-color: var(--nc-bg) !important;
+  color: var(--nc-text) !important;
+  border-color: var(--nc-border) !important;
+}
+html[data-nightcell="on"] .formula-bar-separator,
+html[data-nightcell="on"] .formula-bar-separator-container,
+html[data-nightcell="on"] .formula-bar-fx-icon,
+html[data-nightcell="on"] #formula-bar .docs-icon {
+  border-color: var(--nc-border) !important;
+  color: var(--nc-text-3) !important;
+}
+html[data-nightcell="on"] .cell-input,
+html[data-nightcell="on"] #waffle-rich-text-editor,
+html[data-nightcell="on"] .waffle-cell-input {
+  background-color: var(--nc-bg) !important;
+  color: var(--nc-text) !important;
+  caret-color: var(--nc-text) !important;
+}
+html[data-nightcell="on"] .cell-input * { color: inherit; }
+
+/* ---------- sheet tabs + bottom bar ---------- */
+html[data-nightcell="on"] .docs-sheet-tab {
+  background-color: transparent !important;
+  color: var(--nc-text-2) !important;
+  border-color: transparent !important;
+}
+html[data-nightcell="on"] .docs-sheet-tab:hover { background-color: var(--nc-hover) !important; }
+html[data-nightcell="on"] .docs-sheet-active-tab {
+  background-color: var(--nc-accent-bg) !important;
+  color: var(--nc-accent-strong) !important;
+}
+html[data-nightcell="on"] .docs-sheet-tab-name,
+html[data-nightcell="on"] .docs-sheet-tab-caption { color: inherit !important; }
+html[data-nightcell="on"] .docs-sheet-add,
+html[data-nightcell="on"] .docs-sheet-all,
+html[data-nightcell="on"] .docs-sheet-button,
+html[data-nightcell="on"] .waffle-sum-dropdown,
+html[data-nightcell="on"] .waffle-sum-dropdown * ,
+html[data-nightcell="on"] #waffle-explore-button,
+html[data-nightcell="on"] .waffle-assistant-entry {
+  background-color: transparent !important;
+  color: var(--nc-text-2) !important;
+  border-color: var(--nc-border) !important;
+}
+
+/* ---------- menus, dropdowns, autocomplete ---------- */
+html[data-nightcell="on"] .goog-menu,
+html[data-nightcell="on"] .goog-menu-vertical,
+html[data-nightcell="on"] .goog-popupmenu,
+html[data-nightcell="on"] .docs-menu-attachment,
+html[data-nightcell="on"] .goog-container-vertical,
+html[data-nightcell="on"] .ac-renderer,
+html[data-nightcell="on"] .docs-material-menu,
+html[data-nightcell="on"] .waffle-autocomplete,
+html[data-nightcell="on"] .docs-calloutbubble-bubble,
+html[data-nightcell="on"] .docs-omnibox-autocomplete,
+html[data-nightcell="on"] .goog-palette,
+html[data-nightcell="on"] .docs-colormenuitems {
+  background-color: var(--nc-raised) !important;
+  color: var(--nc-text) !important;
+  border-color: var(--nc-border) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-nightcell="on"] .goog-menuitem,
+html[data-nightcell="on"] .goog-menuitem-content,
+html[data-nightcell="on"] .goog-menuitem-label,
+html[data-nightcell="on"] .goog-menuitem-accel,
+html[data-nightcell="on"] .goog-menuheader,
+html[data-nightcell="on"] .docs-menu-header,
+html[data-nightcell="on"] .goog-option,
+html[data-nightcell="on"] .ac-row {
+  color: var(--nc-text) !important;
+}
+html[data-nightcell="on"] .goog-menuitem-accel,
+html[data-nightcell="on"] .goog-menuitem-disabled,
+html[data-nightcell="on"] .goog-menuitem-disabled .goog-menuitem-content {
+  color: var(--nc-text-3) !important;
+}
+html[data-nightcell="on"] .goog-menuitem-highlight,
+html[data-nightcell="on"] .goog-menuitem-hover,
+html[data-nightcell="on"] .ac-active,
+html[data-nightcell="on"] .goog-option-selected.goog-menuitem-highlight {
+  background-color: var(--nc-hover) !important;
+}
+html[data-nightcell="on"] .goog-menuseparator { border-color: var(--nc-border) !important; }
+html[data-nightcell="on"] .goog-menuitem-checkbox,
+html[data-nightcell="on"] .goog-option-selected .goog-menuitem-checkbox,
+html[data-nightcell="on"] .goog-menuitem-icon { filter: var(--nc-icon-filter); }
+
+/* ---------- dialogs ---------- */
+html[data-nightcell="on"] .modal-dialog,
+html[data-nightcell="on"] .docs-dialog,
+html[data-nightcell="on"] .jfk-dialog,
+html[data-nightcell="on"] .modal-dialog-content,
+html[data-nightcell="on"] .modal-dialog-title,
+html[data-nightcell="on"] .modal-dialog-buttons,
+html[data-nightcell="on"] .docs-material-dialog,
+html[data-nightcell="on"] [role="dialog"]:not(iframe) {
+  background-color: var(--nc-raised) !important;
+  color: var(--nc-text) !important;
+  border-color: var(--nc-border) !important;
+}
+html[data-nightcell="on"] .modal-dialog-title-text,
+html[data-nightcell="on"] .modal-dialog-content label,
+html[data-nightcell="on"] .modal-dialog-content div,
+html[data-nightcell="on"] .modal-dialog-content span {
+  color: var(--nc-text) !important;
+}
+html[data-nightcell="on"] .modal-dialog-bg { background-color: #000 !important; opacity: 0.6 !important; }
+html[data-nightcell="on"] .modal-dialog input:not([type="checkbox"]):not([type="radio"]),
+html[data-nightcell="on"] .modal-dialog textarea,
+html[data-nightcell="on"] .modal-dialog select,
+html[data-nightcell="on"] .jfk-textinput,
+html[data-nightcell="on"] .docs-material-textinput {
+  background-color: var(--nc-input) !important;
+  color: var(--nc-text) !important;
+  border-color: var(--nc-border) !important;
+}
+html[data-nightcell="on"] .jfk-button-standard,
+html[data-nightcell="on"] .goog-flat-menu-button,
+html[data-nightcell="on"] .jfk-button-default:not(.jfk-button-action) {
+  background-color: var(--nc-input) !important;
+  color: var(--nc-text) !important;
+  border-color: var(--nc-border) !important;
+}
+html[data-nightcell="on"] .jfk-button-standard:hover,
+html[data-nightcell="on"] .goog-flat-menu-button:hover { background-color: var(--nc-hover) !important; }
+html[data-nightcell="on"] .modal-dialog-title-close,
+html[data-nightcell="on"] .modal-dialog-title-close-x { filter: var(--nc-icon-filter); }
+
+/* ---------- sidebars (chart editor, conditional formatting, data validation, explore) ---------- */
+html[data-nightcell="on"] .docs-sidebar,
+html[data-nightcell="on"] .waffle-sidebar,
+html[data-nightcell="on"] .waffle-sidebar-container,
+html[data-nightcell="on"] .waffle-sidebar-content,
+html[data-nightcell="on"] .waffle-sidebar-header,
+html[data-nightcell="on"] .docs-sidekick-container,
+html[data-nightcell="on"] .script-application-sidebar,
+html[data-nightcell="on"] .script-application-sidebar-content,
+html[data-nightcell="on"] .waffle-charteditor-sidebar,
+html[data-nightcell="on"] .waffle-conditional-format-sidebar,
+html[data-nightcell="on"] .waffle-datavalidation-sidebar,
+html[data-nightcell="on"] .docs-explore-sidebar {
+  background-color: var(--nc-raised) !important;
+  color: var(--nc-text) !important;
+  border-color: var(--nc-border) !important;
+}
+
+/* ---------- tooltips, bubbles, toasts ---------- */
+html[data-nightcell="on"] .jfk-tooltip,
+html[data-nightcell="on"] .jfk-tooltip-contentId,
+html[data-nightcell="on"] .docs-tooltip,
+html[data-nightcell="on"] .jfk-bubble,
+html[data-nightcell="on"] .jfk-bubble-content-id,
+html[data-nightcell="on"] .docs-butterbar,
+html[data-nightcell="on"] .docs-butterbar-container,
+html[data-nightcell="on"] .waffle-note-bubble,
+html[data-nightcell="on"] .docs-note-bubble {
+  background-color: var(--nc-raised) !important;
+  color: var(--nc-text) !important;
+  border-color: var(--nc-border) !important;
+}
+html[data-nightcell="on"] .jfk-bubble-arrowimplbefore,
+html[data-nightcell="on"] .jfk-bubble-arrowimplafter { border-color: var(--nc-raised) transparent !important; }
+
+/* ---------- comments ---------- */
+html[data-nightcell="on"] .docos-anchoreddocoview,
+html[data-nightcell="on"] .docos-docoview-tesla-conflict,
+html[data-nightcell="on"] .docos-streamdocoview,
+html[data-nightcell="on"] .docos-replyview,
+html[data-nightcell="on"] .docos-input-textarea,
+html[data-nightcell="on"] .docos-anchoredreplyview,
+html[data-nightcell="on"] .docos-docoview-replycontainer {
+  background-color: var(--nc-raised) !important;
+  color: var(--nc-text) !important;
+  border-color: var(--nc-border) !important;
+}
+
+/* ---------- selection chrome on top of the canvas ---------- */
+html[data-nightcell="on"] .autofill-handle { border-color: var(--nc-bg) !important; }
+
+/* ---------- auto-darkened surfaces found at runtime (see bridge.js) ---------- */
+html[data-nightcell="on"] [data-nc-surface] {
+  background-color: var(--nc-raised) !important;
+  border-color: var(--nc-border) !important;
+}
+html[data-nightcell="on"] [data-nc-surface="input"] { background-color: var(--nc-input) !important; }
+html[data-nightcell="on"] [data-nc-text] { color: var(--nc-text) !important; }
+html[data-nightcell="on"] [data-nc-text="muted"] { color: var(--nc-text-2) !important; }
+html[data-nightcell="on"] [data-nc-icon] { filter: var(--nc-icon-filter) !important; }
+
+/* ---------- scrollbars ---------- */
+html[data-nightcell="on"] { scrollbar-color: #555 transparent; }
+html[data-nightcell="on"] .native-scrollbar-corner,
+html[data-nightcell="on"] .grid-scrollbar-corner { background-color: var(--nc-app) !important; }
+
+/* ---------- print stays light: Google renders print/PDF server-side, but guard local previews ---------- */
+@media print {
+  html[data-nightcell="on"] { color-scheme: light; }
+}

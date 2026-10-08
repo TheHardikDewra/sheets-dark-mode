@@ -1,0 +1,41 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Mock Sheet - Google Sheets</title>
+<style>
+  body { margin: 0; font: 13px Arial; background: #f8fafd; }
+  #docs-chrome { background: #f8fafd; padding: 8px; }
+  #docs-toolbar-wrapper { background: #f0f4f9; padding: 6px; border-radius: 20px; }
+  .goog-toolbar-button { display: inline-block; padding: 4px 8px; }
+  #t-zoom { display: inline-block; }
+  #0-grid-container { position: relative; }
+</style></head>
+<body>
+<div id="docs-chrome">
+  <div id="docs-toolbar-wrapper"><div class="goog-toolbar-button" id="t-bold">B</div>
+    <div id="t-zoom" class="goog-toolbar-combo-button"><input value="100%"><span class="goog-toolbar-combo-button-dropdown">▾</span></div></div>
+</div>
+<div id="0-grid-container"><div id="0-grid-table-container"><canvas id="grid" width="800" height="300"></canvas></div>
+  <div class="waffle-objwrap-gvizchart"><canvas id="chart" width="300" height="200"></canvas></div></div>
+<script>
+  // behaves like Sheets: paints the grid with 2D canvas calls, repaints on a real resize
+  window.__paints = 0; window.__firstPaintBg = null;
+  function paint() {
+    window.__paints++;
+    const g = document.getElementById('grid').getContext('2d');
+    g.fillStyle = '#ffffff'; g.fillRect(0, 0, 800, 300);                 // default cell background
+    g.fillStyle = '#1f2937'; g.fillRect(0, 0, 800, 42);                  // dark header band
+    g.fillStyle = '#ffffff'; g.font = '16px Arial'; g.fillText('Header', 10, 28);
+    g.fillStyle = '#fff2cc'; g.fillRect(0, 84, 400, 42);                 // pastel fill
+    g.fillStyle = '#000000'; g.fillText('Black text', 10, 70); g.fillText('On pastel', 10, 112);
+    g.strokeStyle = 'rgba(31, 31, 31, 0.133)'; g.lineWidth = 2; g.beginPath(); g.moveTo(0, 126); g.lineTo(800, 126); g.stroke();
+    for (let i = 0; i < 6; i++) { g.fillStyle = '#ffffff'; g.fillRect(400, 126 + i * 42, 400, 42); } // learn row height
+    g.fillStyle = '#000000'; g.fillRect(600, 140, 30, 20);              // sparkline-like bar (shorter than a row)
+    const c = document.getElementById('chart').getContext('2d');
+    c.fillStyle = '#ffffff'; c.fillRect(0, 0, 300, 200);                 // chart background
+    c.fillStyle = '#4285f4'; c.fillRect(40, 60, 40, 120);                // series colour
+    c.fillStyle = '#000000'; c.fillText('Axis', 10, 195);
+    if (!window.__firstPaintBg) window.__firstPaintBg = Array.from(g.getImageData(700, 200, 1, 1).data).slice(0, 3).join(',');
+  }
+  paint();
+  window.addEventListener('resize', paint);
+</script>
+</body></html>

@@ -83,12 +83,12 @@ OLED 7.36, Dim 5.20. The weakest pair is red text on a dark green fill, which re
 light mode.
 
 The end-to-end test loads the real extension into Chrome for Testing against a local mock of
-the Sheets page and checks 32 things: the first paint is already dark, grid and chart colours,
+the Sheets page and checks 33 things: the first paint is already dark, grid and chart colours,
 dark fills that stay dark after frozen-row repaints, the toolbar stylesheet, the safety net (an
 unknown light pop-up and its hairlines, a 5,000-node sidebar, tinted chips, hover states, text
 that fades in), switching theme from the popup (with repaint and zoom restored), the font setting
-(an installed font takes over canvas text and the interface, monospace stays, a missing font is
-refused, reset restores Sheets' fonts), turning it off, and settings persistence.
+(an installed font takes over canvas text, the interface and the popup, monospace stays, a missing
+font is refused, reset restores Sheets' fonts), turning it off, and settings persistence.
 
 `scripts/dev-bundle.py` builds a single snippet (engine + stylesheet + safety net) that can be
 pasted into a Sheets tab's console to try a change live without reloading the extension.

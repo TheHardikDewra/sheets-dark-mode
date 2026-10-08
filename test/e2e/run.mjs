@@ -147,6 +147,8 @@ try {
   await sleep(1500);
   const foundMsg = await popup.$eval('#fontStatus', (e) => e.textContent);
   check('popup finds an installed font', /^Georgia is installed/.test(foundMsg), foundMsg);
+  const popupFont = await popup.evaluate(() => getComputedStyle(document.body).fontFamily);
+  check('the popup itself switches to the chosen font', /^"?Georgia"?,/.test(popupFont), popupFont);
   await page.bringToFront();
   await sleep(1500);
   const fontOn = await measure();

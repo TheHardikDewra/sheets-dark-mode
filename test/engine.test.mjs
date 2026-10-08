@@ -47,14 +47,16 @@ test('grid: white cell -> dark, black text -> light, contrast >= 7', () => {
   assert.ok(contrast(bg, fg) >= 7, `${bg} vs ${fg}`);
 });
 
-test('grid: every common fill keeps text readable (>= 4.5:1)', () => {
-  const { engine } = loadEngine();
+test('grid: every common fill keeps text readable (>= 5:1) in every theme', () => {
   const fills = ['#ffffff', '#f3f3f3', '#fff2cc', '#d9ead3', '#cfe2f3', '#f4cccc', '#fee2e2', '#86efac', '#fde68a', '#f87171',
     '#2563eb', '#166534', '#7c3aed', '#000000', '#1f2937', '#d3e3fd', '#f8f9fa', '#4285f4', '#ff0000', '#ffff00'];
   const texts = ['#000000', '#444746', '#6b7280', '#ffffff', '#ff0000', '#1155cc', '#16a34a', '#dc2626', '#041e49'];
-  for (const f of fills) for (const t of texts) {
-    const ratio = contrast(engine.remap('grid', 'bg', f), engine.remap('grid', 'fg', t));
-    assert.ok(ratio >= 4.5, `fill ${f} text ${t} -> ${ratio.toFixed(2)}`);
+  for (const theme of ['graphite', 'midnight', 'oled', 'dim']) {
+    const { engine } = loadEngine({ on: true, theme });
+    for (const f of fills) for (const t of texts) {
+      const ratio = contrast(engine.remap('grid', 'bg', f), engine.remap('grid', 'fg', t));
+      assert.ok(ratio >= 5, `${theme}: fill ${f} text ${t} -> ${ratio.toFixed(2)}`);
+    }
   }
 });
 

@@ -17,7 +17,7 @@ readable on whatever cell it sits on.
 
 | | |
 |---|---|
-| **Grid** | Cell fills keep their hue in a dark band. Text is lifted per colour, so every fill/text pair stays at 5.5:1 contrast or better (tested, see below). |
+| **Grid** | Cell fills keep their hue in a dark band. Text is lifted per colour, so every fill/text pair we test stays at 5:1 contrast or better in all four themes (see Tests). |
 | **Your colours** | Conditional-format scales, banding, colour-coded text, checkboxes, dropdown chips and sparklines all stay distinguishable. |
 | **Charts** | Backgrounds and labels go dark; series colours are kept as you chose them (or adapt them, your call). |
 | **Everything else** | Menus, toolbar, formula bar, sheet tabs, dialogs, sidebars, tooltips, comments. A safety net darkens any new pop-up Google ships before the stylesheet knows it. |
@@ -31,10 +31,11 @@ readable on whatever cell it sits on.
 1. Download this repo (Code -> Download ZIP) and unzip it, or `git clone` it.
 2. Open `chrome://extensions` and switch on **Developer mode** (top right).
 3. Click **Load unpacked** and choose the `extension` folder.
-4. Open any Google Sheet. It is dark already; the moon icon in the toolbar has the settings.
+4. Open any Google Sheet. It is dark already. Pin the moon icon from Chrome's puzzle-piece menu
+   to reach the settings.
 
-Works in Chrome 111+ and Chromium browsers that support Manifest V3 main-world content scripts
-(Edge, Brave, Arc, Vivaldi).
+Built for Chrome 111+ and tested in Chrome. Other Chromium browsers with Manifest V3 main-world
+content scripts (Edge, Brave, Arc, Vivaldi) load it the same way.
 
 ## How it works
 
@@ -67,13 +68,17 @@ node test/e2e/run.mjs <chrome-binary> <puppeteer-core-dir>     # the packaged ex
 ```
 
 The contrast test maps 20 common fills against 9 common text colours (180 pairs, including
-Sheets' own header blues and banding greys) and fails if any pair drops below WCAG AA (4.5:1).
-Current minimum: 5.5:1.
+Sheets' own header blues and banding greys) in each of the four themes, and fails if any pair
+drops below 5:1 (WCAG AA asks for 4.5:1). Current minimums: Graphite 5.34, Midnight 5.11,
+OLED 7.36, Dim 5.20. The weakest pair is red text on a dark green fill, which reads at 1.5:1 in
+light mode.
 
 The end-to-end test loads the real extension into Chrome for Testing against a local mock of
-the Sheets page and checks 20 things: the first paint is already dark, grid and chart colours,
-the toolbar stylesheet, the safety net on an unknown light pop-up, switching theme from the
-popup (with repaint and zoom restored), turning it off, and settings persistence.
+the Sheets page and checks 25 things: the first paint is already dark, grid and chart colours,
+dark fills that stay dark after frozen-row repaints, the toolbar stylesheet, the safety net (an
+unknown light pop-up and its hairlines, a 5,000-node sidebar, tinted chips, hover states, text
+that fades in), switching theme from the popup (with repaint and zoom restored), turning it off,
+and settings persistence.
 
 `scripts/dev-bundle.py` builds a single snippet (engine + stylesheet + safety net) that can be
 pasted into a Sheets tab's console to try a change live without reloading the extension.
@@ -104,7 +109,7 @@ extension/   the extension (load this folder unpacked)
 site/        landing page + privacy policy (deployed on Vercel)
 store/       Chrome Web Store listing copy and screenshots
 test/        engine tests + the fake-data demo sheet script
-scripts/     build the store zip
+scripts/     build the store zip (also copied to site/nightcell.zip for the download link)
 design/      icon sources
 ```
 

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nightcell: a real dark mode for Google Sheets</title>
+<meta name="description" content="Nightcell repaints the Google Sheets grid as it is drawn: pastel rows become deep tints, red stays red, and text stays readable. Free, open source, no network requests.">
+<meta property="og:title" content="Nightcell: a real dark mode for Google Sheets">
+<meta property="og:description" content="Google Sheets, finally dark. Red still means over budget.">
+<meta property="og:image" content="/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/img/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site.css">
+<script>if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("js")</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/" aria-label="Nightcell home"><img src="/img/icon.svg" alt="" width="28" height="28"><span>Nightcell</span></a>
+  <nav>
+    <a href="#compare">Compare</a>
+    <a href="#install">Install</a>
+    <a href="/privacy">Privacy</a>
+    <a class="gh" href="https://github.com/TheHardikDewra/sheets-dark-mode" aria-label="Nightcell on GitHub"><img src="/img/github_dark.svg" alt="" width="18" height="18"><span>GitHub</span></a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero reveal">
+    <p class="kicker"><svg viewBox="0 0 256 256" aria-hidden="true"><path d="M235.54,150.21a104.84,104.84,0,0,1-37,52.91A104,104,0,0,1,32,120,103.09,103.09,0,0,1,52.88,57.48a104.84,104.84,0,0,1,52.91-37,8,8,0,0,1,10,10,88.08,88.08,0,0,0,109.8,109.8,8,8,0,0,1,10,10Z"/></svg>Chrome extension for Google Sheets</p>
+    <h1>Google Sheets, finally dark. <span>Red still means over budget.</span></h1>
+    <p class="lede">Nightcell repaints the grid as Sheets draws it. Pastel rows become deep tints, red totals stay red, and all 180 fill and text pairs we test read at 5:1 contrast or better, in every theme. Menus, sidebars and dialogs go dark too.</p>
+    <div class="ctas">
+      <a class="btn primary" href="/nightcell.zip" download>
+        <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z"/></svg>
+        Download Nightcell, free (27 KB)
+      </a>
+      <a class="btn" href="#install">Install it in 30 seconds</a>
+    </div>
+    <p class="fine">Not on the Chrome Web Store yet. Built for Chrome 111 or newer and tested there. Edge, Brave, Arc and Vivaldi load it the same way.</p>
+  </section>
+
+  <section id="compare" class="compare reveal" aria-label="Light and dark comparison">
+    <div class="slider" id="slider" style="--pos: 50%">
+      <img class="base" src="/img/sheet-light.webp" alt="A budget sheet in Google Sheets' default light theme" width="1389" height="868">
+      <div class="over"><img src="/img/sheet-dark.webp" alt="The same budget sheet with Nightcell's Graphite theme" width="1389" height="868"></div>
+      <div class="handle" aria-hidden="true"><span><svg viewBox="0 0 256 256"><path d="M213.66,181.66l-32,32a8,8,0,0,1-11.32-11.32L188.69,184H48a8,8,0,0,1,0-16H188.69l-18.35-18.34a8,8,0,0,1,11.32-11.32l32,32A8,8,0,0,1,213.66,181.66Zm-139.32-64a8,8,0,0,0,11.32-11.32L67.31,88H208a8,8,0,0,0,0-16H67.31L85.66,53.66A8,8,0,0,0,74.34,42.34l-32,32a8,8,0,0,0,0,11.32Z"/></svg></span></div>
+      <input type="range" min="0" max="100" value="50" aria-label="Drag to compare light and dark">
+      <span class="tag left">Google Sheets today</span><span class="tag right">With Nightcell</span>
+    </div>
+    <p class="caption">Drag to compare. Same sheet, same numbers, all of them made up for testing.</p>
+  </section>
+
+  <section class="why reveal">
+    <h2>Why inverting breaks a spreadsheet</h2>
+    <p class="sub">Invert-style dark modes flip every colour to its opposite, so a red total turns cyan. Nightcell keeps each hue and moves it into the dark.</p>
+    <div class="table" role="table">
+      <div class="row head" role="row"><span role="columnheader"></span><span role="columnheader">Invert-style extensions</span><span role="columnheader">Nightcell</span></div>
+      <div class="row" role="row"><span role="rowheader">Cell colours</span><span class="no">A red total turns cyan, a green row turns purple</span><span class="yes">Each colour keeps its hue as a dark tint</span></div>
+      <div class="row" role="row"><span role="rowheader">Charts and images</span><span class="no">Go photo-negative</span><span class="yes">Series keep your colours; backgrounds go dark</span></div>
+      <div class="row" role="row"><span role="rowheader">Toolbar and menus</span><span class="no">Often unreadable after a Sheets update</span><span class="yes">Styled, plus a safety net for new pop-ups</span></div>
+      <div class="row" role="row"><span role="rowheader">What it can read</span><span class="no">Many ask for every website</span><span class="yes">Only docs.google.com/spreadsheets</span></div>
+      <div class="row" role="row"><span role="rowheader">Opening a sheet</span><span class="no">Often a white flash first</span><span class="yes">Dark from the first frame</span></div>
+    </div>
+  </section>
+
+  <section class="detail reveal">
+    <div class="col">
+      <h3><svg viewBox="0 0 256 256" aria-hidden="true"><path d="M200.77,53.89A103.27,103.27,0,0,0,128,24h-1.07A104,104,0,0,0,24,128c0,43,26.58,79.06,69.36,94.17A32,32,0,0,0,136,192a16,16,0,0,1,16-16h46.21a31.81,31.81,0,0,0,31.2-24.88,104.43,104.43,0,0,0,2.59-24A103.28,103.28,0,0,0,200.77,53.89Zm13,93.71A15.89,15.89,0,0,1,198.21,160H152a32,32,0,0,0-32,32,16,16,0,0,1-21.31,15.07C62.49,194.3,40,164,40,128a88,88,0,0,1,87.09-88h.9a88.35,88.35,0,0,1,88,87.25A88.86,88.86,0,0,1,213.81,147.6ZM140,76a12,12,0,1,1-12-12A12,12,0,0,1,140,76ZM96,100A12,12,0,1,1,84,88,12,12,0,0,1,96,100Zm0,56a12,12,0,1,1-12-12A12,12,0,0,1,96,156Zm88-56a12,12,0,1,1-12-12A12,12,0,0,1,184,100Z"/></svg>Four themes</h3>
+      <ul class="swatches">
+        <li><i style="background:#181818"></i>Graphite<small>neutral</small></li>
+        <li><i style="background:#141821"></i>Midnight<small>blue-black</small></li>
+        <li><i style="background:#000000"></i>OLED<small>true black</small></li>
+        <li><i style="background:#26272b"></i>Dim<small>soft grey</small></li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3><svg viewBox="0 0 256 256" aria-hidden="true"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,144H32V64H224V192Zm-16-64a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,128Zm0-32a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,96ZM72,160a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16h8A8,8,0,0,1,72,160Zm96,0a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,160Zm40,0a8,8,0,0,1-8,8h-8a8,8,0,0,1,0-16h8A8,8,0,0,1,208,160Z"/></svg>Your call, per sheet</h3>
+      <p>Press <kbd>Alt</kbd> <kbd>Shift</kbd> <kbd>D</kbd> to switch without reloading. Keep one sheet light while the rest go dark, or follow your computer's appearance.</p>
+    </div>
+    <div class="col">
+      <h3><svg viewBox="0 0 256 256" aria-hidden="true"><path d="M214.67,72H200V40a8,8,0,0,0-8-8H64a8,8,0,0,0-8,8V72H41.33C27.36,72,16,82.77,16,96v80a8,8,0,0,0,8,8H56v32a8,8,0,0,0,8,8H192a8,8,0,0,0,8-8V184h32a8,8,0,0,0,8-8V96C240,82.77,228.64,72,214.67,72ZM72,48H184V72H72ZM184,208H72V160H184Zm40-40H200V152a8,8,0,0,0-8-8H64a8,8,0,0,0-8,8v16H32V96c0-4.41,4.19-8,9.33-8H214.67c5.14,0,9.33,3.59,9.33,8Zm-24-52a12,12,0,1,1-12-12A12,12,0,0,1,200,116Z"/></svg>Nothing else changes</h3>
+      <p>Your file is untouched. Collaborators see the normal sheet, colour pickers show the real colours, and printing or exporting a PDF stays light.</p>
+    </div>
+  </section>
+
+  <section id="install" class="install reveal">
+    <h2>Install in 30 seconds</h2>
+    <ol>
+      <li><span>1</span><div><b>Download</b> the zip and unzip it.<a href="/nightcell.zip" download>Download (27 KB)</a></div></li>
+      <li><span>2</span><div><b>Open</b> <code>chrome://extensions</code> and switch on <b>Developer mode</b>, top right.</div></li>
+      <li><span>3</span><div><b>Click Load unpacked</b> and choose the unzipped <code>nightcell</code> folder.</div></li>
+      <li><span>4</span><div><b>Open any Google Sheet.</b> It is dark already. Pin the moon from Chrome's puzzle-piece menu to reach the settings.</div></li>
+    </ol>
+  </section>
+
+  <section class="privacy reveal">
+    <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Z"/></svg>
+    <div>
+      <h2>No servers. No analytics. One permission.</h2>
+      <p>Nightcell makes no network requests and never reads, stores or sends what is in your cells. The only permission is <code>storage</code>, for your theme. <a href="/privacy">Read the privacy policy</a> or <a href="https://github.com/TheHardikDewra/sheets-dark-mode">check the code</a>.</p>
+    </div>
+  </section>
+
+  <section class="faq reveal">
+    <h2>Questions people ask first</h2>
+    <details><summary>Does it change my spreadsheet?</summary><p>No. It only changes how the page is drawn on your screen. The file, your collaborators' view, print and PDF export all stay exactly as they were.</p></details>
+    <details><summary>What does it cost?</summary><p>Nothing. Nightcell is open source under the MIT licence.</p></details>
+    <details><summary>Can it read my data?</summary><p>It swaps colours as Sheets draws them and never looks at the text or numbers. It has no server to send anything to, and it makes no network requests at all.</p></details>
+    <details><summary>Will it break when Google updates Sheets?</summary><p>The grid engine works at the drawing level and does not depend on Google's class names. For menus and dialogs, a safety net darkens any light pop-up it finds, so a new Google panel is dark on day one, and fixes ship on GitHub.</p></details>
+    <details><summary>Does it work on Google Docs or Slides?</summary><p>Not yet. It is built for Sheets, where cell colours carry meaning and a simple invert does the most damage.</p></details>
+  </section>
+</main>
+
+<footer>
+  <span>Made by <a href="https://wedesignlandingpages.com">Hardik Dewra</a></span>
+  <span><a href="https://github.com/TheHardikDewra/sheets-dark-mode">GitHub</a> · <a href="/privacy">Privacy</a> · MIT licence</span>
+</footer>
+
+<script type="module" src="/site.js"></script>
+</body>
+</html>

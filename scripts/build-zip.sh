@@ -7,3 +7,5 @@ mkdir -p dist
 rm -f "dist/nightcell-$v.zip"
 (cd extension && zip -qr -X "../dist/nightcell-$v.zip" . -x '.*' -x '__MACOSX/*')
 echo "dist/nightcell-$v.zip ($(du -h "dist/nightcell-$v.zip" | cut -f1))"
+cp "dist/nightcell-$v.zip" site/nightcell.zip   # the landing page serves the same file at /nightcell.zip
+echo "site/nightcell.zip ($(stat -f%z site/nightcell.zip) bytes)"

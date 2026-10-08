@@ -23,7 +23,7 @@
     graphite: { base: 0.235, tintC: 0, tintH: 0 },
     midnight: { base: 0.245, tintC: 0.018, tintH: 262 },
     oled: { base: 0.15, tintC: 0, tintH: 0 },
-    dim: { base: 0.30, tintC: 0.006, tintH: 250 },
+    dim: { base: 0.30, tintC: 0.006, tintH: 250, lift: 0.07 }, // lighter band, so text sits higher to keep 5:1
   };
 
   // ---------- state ----------
@@ -143,12 +143,13 @@
         const C2 = L >= 0.8 ? Math.min(C, 0.07) : C * 0.82;
         return [...tint(t, L2, C2, h, neutral), a];
       },
-      fg(L, C, h, a) {
+      fg(L, C, h, a, t) {
+        const up = t.lift || 0;
         if (C < 0.03) {
           const L2 = L >= 0.7 ? clamp(L, 0.86, 0.96) : 0.92 - L * 0.2;
-          return [L2, C, h, a];
+          return [Math.min(0.97, L2 + up), C, h, a];
         }
-        return [clamp(Math.max(L + 0.2, 0.8), 0.8, 0.9), C, h, a];
+        return [clamp(Math.max(L + 0.2, 0.8 + up), 0.8 + up, 0.9 + up), C, h, a];
       },
       mark(L, C, h, a) { // sparkline bars and other data marks: keep them visible on the dark band
         if (C < 0.03) return [L < 0.5 ? 0.78 : Math.max(L, 0.62), C, h, a];

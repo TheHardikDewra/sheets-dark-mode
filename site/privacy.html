@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nightcell privacy policy</title>
+<meta name="description" content="Nightcell collects nothing, has no servers and makes no network requests. Its only permission is storage, for your settings.">
+<link rel="icon" type="image/svg+xml" href="/img/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/" aria-label="Nightcell home"><img src="/img/icon.svg" alt="" width="28" height="28"><span>Nightcell</span></a>
+  <nav>
+    <a href="/#compare">Compare</a>
+    <a href="/#install">Install</a>
+    <a class="gh" href="https://github.com/TheHardikDewra/sheets-dark-mode" aria-label="Nightcell on GitHub"><img src="/img/github_dark.svg" alt="" width="18" height="18"><span>GitHub</span></a>
+  </nav>
+</header>
+<main class="doc">
+  <h1>Privacy policy</h1>
+  <p class="updated">Last updated: 8 October 2026</p>
+  <p>Nightcell is a browser extension that changes how Google Sheets looks. It is built to know as little about you as possible.</p>
+
+  <h2>What Nightcell collects</h2>
+  <p>Nothing. Nightcell has no servers, no analytics, no crash reporting and no tracking. It makes no network requests of any kind.</p>
+
+  <h2>What Nightcell stores</h2>
+  <p>Your settings, and only your settings, in your browser's own extension storage (<code>chrome.storage.sync</code>): whether dark mode is on, which theme you picked, whether to follow your computer's appearance, how charts are treated, and a list of sheet IDs you chose to keep light or dark. If you use Chrome sync, Chrome syncs these settings between your own browsers.</p>
+  <p>Nightcell also mirrors the on/off state and theme into the Google Sheets page's local storage under the key <code>nightcell:state:v1</code>, so a sheet opens dark without a flash of white. Nothing else is stored.</p>
+
+  <h2>What Nightcell can see</h2>
+  <p>Nightcell runs only on <code>docs.google.com/spreadsheets</code>. To recolour the grid it changes the colours Google Sheets passes to the drawing canvas. It does not read, copy, store or send the text or numbers in your cells, and it never sees your Google account details.</p>
+
+  <h2>Permissions</h2>
+  <ul>
+    <li><code>storage</code>: to save your settings.</li>
+    <li>Access to <code>https://docs.google.com/spreadsheets/*</code>: to apply the theme there.</li>
+  </ul>
+
+  <h2>Changes and contact</h2>
+  <p>If this policy ever changes, the new version will be published here with a new date. Questions: open an issue at <a href="https://github.com/TheHardikDewra/sheets-dark-mode/issues">github.com/TheHardikDewra/sheets-dark-mode/issues</a>.</p>
+</main>
+<footer>
+  <span>Made by <a href="https://wedesignlandingpages.com">Hardik Dewra</a></span>
+  <span><a href="https://github.com/TheHardikDewra/sheets-dark-mode">GitHub</a> · <a href="/">Home</a> · MIT licence</span>
+</footer>
+</body>
+</html>

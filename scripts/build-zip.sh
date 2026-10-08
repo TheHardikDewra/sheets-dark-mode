@@ -9,3 +9,4 @@ rm -f "dist/nightcell-$v.zip"
 echo "dist/nightcell-$v.zip ($(du -h "dist/nightcell-$v.zip" | cut -f1))"
 cp "dist/nightcell-$v.zip" site/nightcell.zip   # the landing page serves the same file at /nightcell.zip
 echo "site/nightcell.zip ($(stat -f%z site/nightcell.zip) bytes)"
+node scripts/site-data.mjs   # the site shows the version, zip size and engine colours of this build

@@ -117,10 +117,12 @@ merged cells, four chart types) for visual testing. All screenshots use that she
 
 ```
 extension/   the extension (load this folder unpacked)
-site/        landing page + privacy policy (deployed on Vercel)
+site/        landing page + privacy policy (Vercel). data.js is generated: every demo colour
+             comes from the engine. Haffer loads through /fonts, a rewrite to the private
+             wdlp-fonts host, so no font file is ever committed here
 store/       Chrome Web Store listing copy and screenshots
 test/        engine tests + the fake-data demo sheet script
-scripts/     build the store zip (also copied to site/nightcell.zip for the download link)
+scripts/     build-zip.sh builds the store zip, copies it to the site and runs site-data.mjs
 design/      icon sources
 ```
 

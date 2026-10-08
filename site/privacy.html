@@ -30,11 +30,12 @@
   <p>Nothing. Nightcell has no servers, no analytics, no crash reporting and no tracking. It makes no network requests of any kind.</p>
 
   <h2>What Nightcell stores</h2>
-  <p>Your settings, and only your settings, in your browser's own extension storage (<code>chrome.storage.sync</code>): whether dark mode is on, which theme you picked, whether to follow your computer's appearance, how charts are treated, and a list of sheet IDs you chose to keep light or dark. If you use Chrome sync, Chrome syncs these settings between your own browsers.</p>
-  <p>Nightcell also mirrors the on/off state and theme into the Google Sheets page's local storage under the key <code>nightcell:state:v1</code>, so a sheet opens dark without a flash of white. Nothing else is stored.</p>
+  <p>Your settings, and only your settings, in your browser's own extension storage (<code>chrome.storage.sync</code>): whether dark mode is on, which theme you picked, whether to follow your computer's appearance, how charts are treated, a list of sheet IDs you chose to keep light or dark, and the name of the font you chose, if any. If you use Chrome sync, Chrome syncs these settings between your own browsers.</p>
+  <p>Nightcell also mirrors the on/off state, theme and font name into the Google Sheets page's local storage under the key <code>nightcell:state:v1</code>, so a sheet opens dark without a flash of white, and keeps which weights of your chosen font are installed under <code>nightcell:faces:v1</code>, so a sheet opens in your font straight away. Nothing else is stored.</p>
 
   <h2>What Nightcell can see</h2>
   <p>Nightcell runs only on <code>docs.google.com/spreadsheets</code>. To recolour the grid it changes the colours Google Sheets passes to the drawing canvas. It does not read, copy, store or send the text or numbers in your cells, and it never sees your Google account details.</p>
+  <p>If you choose a font, Nightcell checks whether it is installed by asking the browser to load that one name from your computer. It never lists, reads or uploads your other fonts.</p>
 
   <h2>Permissions</h2>
   <ul>

@@ -14,16 +14,20 @@ no network requests of any kind.
 
 Your settings, and only your settings, in your browser's own extension storage
 (`chrome.storage.sync`): whether dark mode is on, which theme you picked, whether to follow your
-computer's appearance, how charts are treated, and a list of sheet IDs you chose to keep light or
-dark. If you use Chrome sync, Chrome syncs these settings between your own browsers. Nightcell
-also mirrors the on/off state and theme into the Google Sheets page's local storage under the key
-`nightcell:state:v1`, so a sheet opens dark without a flash of white. Nothing else is stored.
+computer's appearance, how charts are treated, a list of sheet IDs you chose to keep light or
+dark, and the name of the font you chose, if any. If you use Chrome sync, Chrome syncs these
+settings between your own browsers. Nightcell also mirrors the on/off state, theme and font name
+into the Google Sheets page's local storage under the key `nightcell:state:v1`, so a sheet opens
+dark without a flash of white, and keeps which weights of your chosen font are installed under
+`nightcell:faces:v1`, so a sheet opens in your font straight away. Nothing else is stored.
 
 ## What Nightcell can see
 
 Nightcell runs only on `docs.google.com/spreadsheets`. To recolour the grid it changes the colours
 Google Sheets passes to the drawing canvas; it does not read, copy, store or send the text or
-numbers in your cells, and it never sees your Google account details.
+numbers in your cells, and it never sees your Google account details. If you choose a font,
+Nightcell checks whether it is installed by asking the browser to load that one name from your
+computer. It never lists, reads or uploads your other fonts.
 
 ## Permissions
 

@@ -133,6 +133,40 @@ try {
   const zoom = await sw.worker().then((w) => w.evaluate(async () => { const [t] = await chrome.tabs.query({ url: 'http://127.0.0.1:8765/*' }); return chrome.tabs.getZoom(t.id); }));
   check('zoom restored after repaint', Math.abs(zoom - 1) < 0.001, String(zoom));
 
+  // font: a font installed on this computer takes over canvas text and the interface
+  const measure = () => page.evaluate(() => {
+    const c = document.createElement('canvas').getContext('2d');
+    const w = (f) => { c.font = f; return +c.measureText('Hamburgefonstiv 0123').width.toFixed(2); };
+    const span = (fam) => { const s = document.createElement('span'); s.textContent = 'Hamburgefonstiv 0123'; s.style.cssText = `position:absolute;left:-9999px;font:400 20px ${fam};white-space:nowrap`; document.body.appendChild(s); const r = s.getBoundingClientRect().width; s.remove(); return +r.toFixed(2); };
+    return { arial: w('20px Arial'), georgia: w('20px Georgia'), courier: w('20px "Courier New"'), uiRoboto: span('Roboto'), uiGeorgia: span('Georgia'),
+      attr: document.documentElement.hasAttribute('data-nc-font'), fontVar: document.documentElement.style.getPropertyValue('--nc-font') };
+  });
+  const fontBase = await measure();
+  await popup.bringToFront();
+  await popup.type('#font', 'Georgia');
+  await sleep(1500);
+  const foundMsg = await popup.$eval('#fontStatus', (e) => e.textContent);
+  check('popup finds an installed font', /^Georgia is installed/.test(foundMsg), foundMsg);
+  await page.bringToFront();
+  await sleep(1500);
+  const fontOn = await measure();
+  check('chosen font marks <html> for the editor', fontOn.attr && fontOn.fontVar.includes('"Georgia"'), fontOn.fontVar);
+  check('canvas text draws in the chosen font', fontOn.arial === fontBase.georgia && fontBase.arial !== fontBase.georgia, `${fontBase.arial} -> ${fontOn.arial} (Georgia ${fontBase.georgia})`);
+  check('monospace canvas text keeps its font', fontOn.courier === fontBase.courier, `${fontOn.courier}`);
+  check('interface text switches to the chosen font', fontOn.uiRoboto === fontOn.uiGeorgia && fontBase.uiRoboto !== fontBase.uiGeorgia, `${fontBase.uiRoboto} -> ${fontOn.uiRoboto}`);
+  await popup.bringToFront();
+  await popup.$eval('#font', (e) => { e.value = ''; });
+  await popup.type('#font', 'Nope Font 123');
+  await sleep(1200);
+  const missingMsg = await popup.$eval('#fontStatus', (e) => e.textContent);
+  const keptFont = await sw.worker().then((w) => w.evaluate(() => chrome.storage.sync.get('font')));
+  check('a font that is not installed is refused, the last good one stays', /^Nope Font 123 isn't installed/.test(missingMsg) && keptFont.font === 'Georgia', `${missingMsg} / ${keptFont.font}`);
+  await popup.click('#fontReset');
+  await page.bringToFront();
+  await sleep(1500);
+  const fontOff = await measure();
+  check('reset gives Sheets its own fonts back', !fontOff.attr && fontOff.arial === fontBase.arial && fontOff.uiRoboto === fontBase.uiRoboto, `${fontOff.arial}, ${fontOff.uiRoboto}`);
+
   // switch off -> light again, and a reload boots light synchronously
   await popup.bringToFront();
   await popup.click('#enabled');

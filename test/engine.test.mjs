@@ -9,9 +9,12 @@ function loadEngine(saved) {
   const attrs = {};
   class Ctx { get fillStyle() { return this._f || '#000000'; } set fillStyle(v) { this._f = v; }
               get strokeStyle() { return this._s || '#000000'; } set strokeStyle(v) { this._s = v; }
+              get font() { return this._font || '10px sans-serif'; } set font(v) { this._font = v; }
               fillRect() {} fill() {} fillText() {} stroke() {} strokeRect() {} strokeText() {} }
   const listeners = {};
-  const document = { documentElement: { setAttribute: (k, v) => { attrs[k] = v; } },
+  const style = {};
+  const document = { documentElement: { setAttribute: (k, v) => { attrs[k] = v; }, removeAttribute: (k) => { delete attrs[k]; },
+      hasAttribute: (k) => k in attrs, style: { setProperty: (k, v) => { style[k] = v; }, removeProperty: (k) => { delete style[k]; } } },
     addEventListener: (t, f) => { listeners[t] = f; }, dispatchEvent: () => true };
   const window = { CanvasRenderingContext2D: Ctx, devicePixelRatio: 2 };
   const ctx = { window, document, localStorage: { getItem: (k) => store.get(k) ?? null },
@@ -19,8 +22,9 @@ function loadEngine(saved) {
     MutationObserver: class { observe() {} }, CanvasRenderingContext2D: Ctx, console };
   ctx.window.window = ctx.window;
   vm.createContext(ctx);
+  vm.runInContext(readFileSync(new URL('../extension/src/font.js', import.meta.url), 'utf8'), ctx);
   vm.runInContext(readFileSync(new URL('../extension/src/engine.js', import.meta.url), 'utf8'), ctx);
-  return { engine: ctx.window.__nightcellEngine, attrs, Ctx, listeners };
+  return { engine: ctx.window.__nightcellEngine, font: ctx.window.NightcellFont, attrs, Ctx, listeners };
 }
 
 const lum = (hex) => { const v = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
@@ -90,4 +94,52 @@ test('draw calls restore the original style afterwards', () => {
   const c = new Ctx(); c.canvas = null; c.fillStyle = '#ffffff';
   c.fillRect(0, 0, 100, 20);
   assert.equal(c.fillStyle, '#ffffff');
+});
+
+test('font: names are cleaned before they reach CSS or a canvas font', () => {
+  const { font } = loadEngine();
+  assert.equal(font.clean('  Haffer  XH '), 'Haffer XH');
+  assert.equal(font.clean('Evil"; } body { x: url(y)'), 'Evil body x urly');
+  assert.equal(font.clean('Söhne Breit'), 'Söhne Breit');
+});
+
+test('font: the chosen family goes first in canvas fonts, monospace cells keep theirs', () => {
+  const { font } = loadEngine();
+  assert.equal(font.rewriteFont('13px Arial', 'Haffer'), '13px "Haffer", Arial');
+  assert.equal(font.rewriteFont('bold 13.3333px docs-Inter, Arial', 'Haffer'), 'bold 13.3333px "Haffer", docs-Inter, Arial');
+  assert.equal(font.rewriteFont('italic 700 10pt/1.2 "docs-Open Sans"', 'Haffer'), 'italic 700 10pt/1.2 "Haffer", "docs-Open Sans"');
+  for (const mono of ['13px "docs-Roboto Mono"', '10pt "Courier New"', '12px Inconsolata, monospace']) assert.equal(font.rewriteFont(mono, 'Haffer'), mono);
+  assert.equal(font.rewriteFont('13px Arial', ''), '13px Arial');
+  assert.equal(font.rewriteFont('13px "Haffer", Arial', 'Haffer'), '13px "Haffer", Arial'); // never doubled
+});
+
+test('font: local() is tried under full and PostScript names', () => {
+  const { font } = loadEngine();
+  const regular = font.candidates('Haffer', 400, false), semi = font.candidates('Haffer XH', 600, true);
+  for (const n of ['Haffer Regular', 'Haffer-Regular', 'Haffer']) assert.ok(regular.includes(n), n);
+  for (const n of ['Haffer XH SemiBold Italic', 'HafferXH-SemiBoldItalic']) assert.ok(semi.includes(n), n);
+});
+
+test('font: every weight maps to the nearest installed one, as CSS matching would', () => {
+  const { font } = loadEngine();
+  assert.equal(font.nearestWeight([300, 400, 700], 500), 400);
+  assert.equal(font.nearestWeight([300, 400, 700], 600), 700);
+  assert.equal(font.nearestWeight([300, 400, 700], 100), 300);
+  assert.equal(font.nearestWeight([400, 500], 450), 500);
+  const plan = font.planFaces([{ weight: 400, italic: false, name: 'X-Regular' }, { weight: 700, italic: false, name: 'X-Bold' }]);
+  assert.equal(plan.length, 9); // no italics installed: italic text keeps Google's italic
+  assert.equal(plan.find((f) => f.weight === 600).name, 'X-Bold');
+  assert.equal(plan.find((f) => f.weight === 500).name, 'X-Regular');
+});
+
+test('font: the engine rewrites canvas fonts only while a font is chosen', () => {
+  const off = loadEngine();
+  const a = new off.Ctx(); a.font = '13px Arial';
+  assert.equal(a.font, '13px Arial');
+  const on = loadEngine({ on: true, theme: 'graphite', font: 'Haffer', faces: [] });
+  const b = new on.Ctx(); b.font = '13px Arial';
+  assert.equal(b.font, '13px "Haffer", Arial');
+  b.font = '13px "docs-Roboto Mono"';
+  assert.equal(b.font, '13px "docs-Roboto Mono"');
+  assert.equal(on.attrs['data-nc-font'], '');
 });

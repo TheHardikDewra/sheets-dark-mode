@@ -13,7 +13,10 @@
   window.__nightcellBridge = true;
 
   const STORE_KEY = 'nightcell:state:v1';
-  const DEFAULTS = { enabled: true, theme: 'graphite', followSystem: false, chartColors: 'keep', docOverrides: {} };
+  const DEFAULTS = { enabled: true, theme: 'graphite', followSystem: false, chartColors: 'keep', docOverrides: {}, font: '' };
+  // The engine does the font work (font.js lives in the page world; Chrome injects a file once per
+  // frame, so it cannot also load here). The name only needs to be tidy enough to compare.
+  const cleanFont = (n) => String(n || '').replace(/[^\p{L}\p{N} _.-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 64);
   const docId = (location.pathname.match(/\/spreadsheets\/(?:u\/\d+\/)?d\/([^/]+)/) || [])[1] || '';
   const systemDark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
@@ -21,8 +24,9 @@
   let current = readMirror();
 
   function readMirror() {
-    try { return JSON.parse(localStorage.getItem(STORE_KEY) || 'null') || { on: true, theme: 'graphite', chartColors: 'keep' }; }
-    catch (_) { return { on: true, theme: 'graphite', chartColors: 'keep' }; }
+    const fallback = { on: true, theme: 'graphite', chartColors: 'keep', font: '' };
+    try { return { ...fallback, ...(JSON.parse(localStorage.getItem(STORE_KEY) || 'null') || {}) }; }
+    catch (_) { return fallback; }
   }
 
   function effective(s) {
@@ -31,11 +35,12 @@
     const o = s.docOverrides && docId ? s.docOverrides[docId] : undefined;
     if (o === 'on') on = true;
     if (o === 'off') on = false;
-    return { on, theme: s.theme, chartColors: s.chartColors };
+    return { on, theme: s.theme, chartColors: s.chartColors, font: cleanFont(s.font) };
   }
 
   function push(next, { repaint } = { repaint: true }) {
-    const changed = next.on !== current.on || next.theme !== current.theme || next.chartColors !== current.chartColors;
+    const changed = next.on !== current.on || next.theme !== current.theme || next.chartColors !== current.chartColors
+      || next.font !== current.font;
     current = next;
     try { localStorage.setItem(STORE_KEY, JSON.stringify(next)); } catch (_) { /* storage blocked */ }
     document.documentElement.setAttribute('data-nightcell', next.on ? 'on' : 'off');

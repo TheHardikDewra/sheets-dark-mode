@@ -1,7 +1,7 @@
 # Chrome Web Store listing: Nightcell
 
 Everything the Developer Dashboard asks for, ready to paste. The upload is
-`dist/nightcell-1.0.0.zip` (run `zsh scripts/build-zip.sh` first; it also refreshes the copy the
+`dist/nightcell-1.1.0.zip` (run `zsh scripts/build-zip.sh` first; it also refreshes the copy the
 site serves at `/nightcell.zip`).
 
 ## Package
@@ -9,9 +9,9 @@ site serves at `/nightcell.zip`).
 | Field | Value |
 |---|---|
 | Name (from the manifest) | Nightcell: Dark Mode for Google Sheets |
-| Summary (manifest `description`, 114 of 132 characters) | A real dark mode for Google Sheets. Cells, charts, menus and dialogs go dark, and your cell colours stay readable. |
-| Version | 1.0.0 |
-| Upload | `dist/nightcell-1.0.0.zip` |
+| Summary (manifest `description`, 126 of 132 characters) | A real dark mode for Google Sheets. Cells, charts and menus go dark, cell colours stay readable, and any installed font works. |
+| Version | 1.1.0 |
+| Upload | `dist/nightcell-1.1.0.zip` |
 
 ## Store listing tab
 
@@ -32,6 +32,7 @@ YOUR CALL
 • Four themes: Graphite, Midnight (blue-black), OLED (true black) and Dim (soft grey)
 • Alt+Shift+D turns dark mode on or off without a reload
 • Keep one sheet light while the rest go dark, or follow your computer's appearance
+• Any font installed on your computer, in cells, charts and menus. Monospace cells keep theirs
 
 NOTHING ELSE CHANGES
 Your file is untouched. Collaborators see the normal sheet, colour pickers show the real colours, and printing or PDF export stays light.
@@ -62,14 +63,14 @@ Every screenshot comes from the fake-data demo sheet built by `test/demo-sheet.g
 **Single purpose:**
 
 ```
-Nightcell gives Google Sheets a dark theme: it recolours the spreadsheet grid, charts and the Sheets interface so they are comfortable to read in the dark.
+Nightcell changes how Google Sheets looks on your screen: a dark theme for the spreadsheet grid, charts and interface, and optionally a font installed on your computer.
 ```
 
 **Permission justifications:**
 
 | Permission | Justification (paste) |
 |---|---|
-| `storage` | Saves the user's own settings (on or off, theme, chart colour mode, follow system appearance, and the list of sheets kept light or dark) with chrome.storage.sync. Nothing else is stored. |
+| `storage` | Saves the user's own settings (on or off, theme, chart colour mode, follow system appearance, the list of sheets kept light or dark, and the name of a chosen font) with chrome.storage.sync. Nothing else is stored. |
 | Host permission `https://docs.google.com/spreadsheets/*` | The content scripts that apply the dark theme run only on Google Sheets pages. They recolour what Sheets draws and style the Sheets interface. No other site is accessed. |
 
 **Remote code:** No, I am not using remote code. Every script ships inside the package.
@@ -107,7 +108,7 @@ No account or setup needed beyond any Google account. Open any Google Sheet (for
    Google their legal name and contact details, and that verified information is shown to store
    users. Non-traders get a notice on the listing that EU consumer-protection rights do not apply.
    That call is yours ([policy](https://developer.chrome.com/docs/webstore/program-policies/trader-disclosure)).
-3. Click **New item**, upload `dist/nightcell-1.0.0.zip`.
+3. Click **New item**, upload `dist/nightcell-1.1.0.zip`.
 4. Paste the store listing, privacy and distribution fields above, upload the icon and images.
 5. Click **Submit for review**. Google reviews it before it goes live, and the review time varies.
 6. When it is live, swap the site's download buttons for the store link and update the

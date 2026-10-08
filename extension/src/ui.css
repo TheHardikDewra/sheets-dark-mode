@@ -446,6 +446,11 @@ html[data-nightcell="on"] { scrollbar-color: #555 transparent; }
 html[data-nightcell="on"] .native-scrollbar-corner,
 html[data-nightcell="on"] .grid-scrollbar-corner { background-color: var(--nc-app) !important; }
 
+/* ---------- a font from this computer (font.js): the in-cell editor matches the grid ----------
+   Applies with dark mode on or off. Monospace cells keep their font, on the canvas and here. */
+html[data-nc-font] :is(.input-box, #waffle-rich-text-editor):not([data-nc-keep-font]),
+html[data-nc-font] :is(.input-box, #waffle-rich-text-editor):not([data-nc-keep-font]) * { font-family: var(--nc-font) !important; }
+
 /* ---------- print stays light: Google renders print/PDF server-side, but guard local previews ---------- */
 @media print {
   html[data-nightcell="on"] { color-scheme: light; }

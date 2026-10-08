@@ -24,6 +24,7 @@ readable on whatever cell it sits on.
 | **Charts** | Backgrounds and labels go dark; series colours are kept as you chose them (or adapt them, your call). |
 | **Everything else** | Menus, toolbar, formula bar, sheet tabs, dialogs, sidebars, tooltips, comments. A safety net darkens any new pop-up Google ships before the stylesheet knows it. |
 | **Four themes** | Graphite (neutral), Midnight (blue-black), OLED (true black), Dim (soft grey). |
+| **Your font** | Type any font installed on your computer into the popup. Cells, charts, menus and dialogs use it on your screen; monospace cells keep theirs, and the file never changes. |
 | **Per sheet** | Keep one sheet light while the rest go dark, or follow your computer's appearance. |
 | **Shortcut** | `Alt+Shift+D` toggles. No reload. |
 | **Private** | No analytics, no network requests, no access to your cell data. One permission: `storage`, for your settings. |
@@ -43,7 +44,7 @@ content scripts (Edge, Brave, Arc, Vivaldi) load it the same way.
 ## How it works
 
 ```
-document_start ─┬─ engine.js (page world)    wraps CanvasRenderingContext2D draw calls
+document_start ─┬─ font.js + engine.js       wraps CanvasRenderingContext2D draw calls (page world)
                 │                            fillRect / fill / fillText / stroke
                 │                            colour -> OKLCH -> dark-theme colour -> draw -> restore
                 ├─ ui.css                    Google's own UI, scoped to html[data-nightcell="on"]
@@ -62,11 +63,16 @@ background.js                                Alt+Shift+D, and a 1% zoom nudge to
   your theme synchronously at `document_start`, before Sheets paints anything.
 - **Repaint without reload.** Sheets only redraws its canvas on a real resize, so a theme change
   nudges the tab zoom by 1% and back (Sheets' own zoom box is the fallback).
+- **Your font, two routes.** Canvas text gets the chosen family put first in every font Sheets
+  sets, and Sheets measures with that same font, so column widths and overflow hold. The interface
+  gets font faces named Roboto, Google Sans and Arial whose source is `local()`, the copy installed
+  on your computer, so Google's own styles never change. Which weights are installed is checked one
+  name at a time with the FontFace API; Nightcell never lists your fonts and bundles none.
 
 ## Tests
 
 ```bash
-node --test test/engine.test.mjs                               # colour maths + contrast
+node --test test/engine.test.mjs                               # colour maths, contrast, fonts
 node test/e2e/run.mjs <chrome-binary> <puppeteer-core-dir>     # the packaged extension, end to end
 ```
 
@@ -77,11 +83,12 @@ OLED 7.36, Dim 5.20. The weakest pair is red text on a dark green fill, which re
 light mode.
 
 The end-to-end test loads the real extension into Chrome for Testing against a local mock of
-the Sheets page and checks 25 things: the first paint is already dark, grid and chart colours,
+the Sheets page and checks 32 things: the first paint is already dark, grid and chart colours,
 dark fills that stay dark after frozen-row repaints, the toolbar stylesheet, the safety net (an
 unknown light pop-up and its hairlines, a 5,000-node sidebar, tinted chips, hover states, text
-that fades in), switching theme from the popup (with repaint and zoom restored), turning it off,
-and settings persistence.
+that fades in), switching theme from the popup (with repaint and zoom restored), the font setting
+(an installed font takes over canvas text and the interface, monospace stays, a missing font is
+refused, reset restores Sheets' fonts), turning it off, and settings persistence.
 
 `scripts/dev-bundle.py` builds a single snippet (engine + stylesheet + safety net) that can be
 pasted into a Sheets tab's console to try a change live without reloading the extension.
@@ -92,7 +99,7 @@ merged cells, four chart types) for visual testing. All screenshots use that she
 
 ## Permissions and privacy
 
-- `storage`: saves your theme and per-sheet choices with `chrome.storage.sync`.
+- `storage`: saves your theme, per-sheet choices and font name with `chrome.storage.sync`.
 - Host access to `https://docs.google.com/spreadsheets/*` only, to run the theme there.
 - Nightcell never reads, stores or sends your spreadsheet content. It makes no network requests
   at all. See [PRIVACY.md](PRIVACY.md), also published at

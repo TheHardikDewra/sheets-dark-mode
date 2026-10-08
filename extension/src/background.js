@@ -6,7 +6,7 @@
  *   trigger without touching the document.
  * - Handles the Alt+Shift+D shortcut.
  */
-const DEFAULTS = { enabled: true, theme: 'graphite', followSystem: false, chartColors: 'keep', docOverrides: {} };
+const DEFAULTS = { enabled: true, theme: 'graphite', followSystem: false, chartColors: 'keep', docOverrides: {}, font: '' };
 const SHEETS = /^https:\/\/docs\.google\.com\/spreadsheets\//;
 
 chrome.runtime.onInstalled.addListener(async () => {

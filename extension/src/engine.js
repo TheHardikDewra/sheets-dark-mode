@@ -13,6 +13,8 @@
  * Two policies:
  *   grid  - the cell canvas: every colour adapts (pastel fills become deep tints)
  *   chart - charts + unknown canvases: only neutrals flip, series colours are kept
+ *
+ * It also shows Sheets in a font installed on this computer when one is set (see font.js).
  */
 (() => {
   'use strict';
@@ -27,7 +29,8 @@
   };
 
   // ---------- state ----------
-  const state = { on: true, theme: 'graphite', chartColors: 'keep' };
+  const F = window.NightcellFont; // font.js runs first in this world
+  const state = { on: true, theme: 'graphite', chartColors: 'keep', font: '', faces: [] };
   try {
     const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
     if (saved && typeof saved === 'object') Object.assign(state, pickState(saved));
@@ -38,14 +41,22 @@
     if (typeof s.on === 'boolean') out.on = s.on;
     if (THEMES[s.theme]) out.theme = s.theme;
     if (s.chartColors === 'keep' || s.chartColors === 'adapt') out.chartColors = s.chartColors;
+    if (typeof s.font === 'string' && F) out.font = F.clean(s.font);
+    if (Array.isArray(s.faces) && F) {
+      out.faces = s.faces.filter((f) => f && typeof f.name === 'string' && f.weight % 100 === 0 && f.weight >= 100 && f.weight <= 900)
+        .slice(0, 18).map((f) => ({ weight: f.weight, italic: !!f.italic, name: F.clean(f.name) })).filter((f) => f.name);
+    }
     return out;
   }
+  const fontKey = (s) => s.font;
 
   function applyRootAttrs() {
     const el = document.documentElement;
     if (!el) return;
     el.setAttribute('data-nightcell', state.on ? 'on' : 'off');
     el.setAttribute('data-nightcell-theme', state.theme);
+    if (state.font) { el.setAttribute('data-nc-font', ''); el.style.setProperty('--nc-font', '"' + state.font + '", sans-serif'); }
+    else if (el.hasAttribute('data-nc-font')) { el.removeAttribute('data-nc-font'); el.style.removeProperty('--nc-font'); }
   }
   applyRootAttrs();
   if (!document.documentElement) {
@@ -332,6 +343,76 @@
   patch(window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype);
   patch(window.OffscreenCanvasRenderingContext2D && OffscreenCanvasRenderingContext2D.prototype);
 
+  // ---------- a font from this computer ----------
+  // Canvas: every font Sheets sets gets the chosen family in front (font.js rewriteFont), so cells
+  // and charts draw in it and measure in it. Reads of ctx.font stay native, so a save()/restore()
+  // pair can never leave Sheets believing a font is set that is not.
+  const fontMemo = new Map();
+  function patchFont(proto) {
+    const d = proto && Object.getOwnPropertyDescriptor(proto, 'font');
+    if (!d || !d.set || !F || proto.__nightcellFont) return;
+    Object.defineProperty(proto, 'font', {
+      configurable: true, enumerable: d.enumerable, get: d.get,
+      set(v) {
+        if (!state.font || typeof v !== 'string') return d.set.call(this, v);
+        let out = fontMemo.get(v);
+        if (out === undefined) {
+          out = F.rewriteFont(v, state.font);
+          if (fontMemo.size > 2000) fontMemo.clear();
+          fontMemo.set(v, out);
+        }
+        d.set.call(this, out);
+      },
+    });
+    Object.defineProperty(proto, '__nightcellFont', { value: true });
+  }
+  patchFont(window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype);
+  patchFont(window.OffscreenCanvasRenderingContext2D && OffscreenCanvasRenderingContext2D.prototype);
+
+  // Interface: faces named after the families Google's UI uses, sourced from the local font, so
+  // menus, toolbar and dialogs switch without touching Google's styles. Faces added here outrank
+  // the page's own @font-face rules, and characters the local font lacks fall through to Google's.
+  // Which weights are installed is probed here and cached, so the next load applies them at once.
+  const FACES_KEY = 'nightcell:faces:v1';
+  function cachedFaces(font) {
+    try {
+      const c = JSON.parse(localStorage.getItem(FACES_KEY) || 'null');
+      return c && c.font === font ? pickState({ faces: c.faces }).faces || [] : [];
+    } catch (_) { return []; }
+  }
+  let probing = '';
+  function refreshFaces() {
+    const font = state.font;
+    if (!F || !font || probing === font) return;
+    probing = font;
+    F.probe(font).then((found) => {
+      if (probing === font) probing = '';
+      if (state.font !== font) return; // changed while probing
+      const faces = F.planFaces(found);
+      try { localStorage.setItem(FACES_KEY, JSON.stringify({ font, faces })); } catch (_) { /* storage blocked */ }
+      if (JSON.stringify(faces) === JSON.stringify(state.faces)) return;
+      state.faces = faces;
+      applyUiFont();
+    }).catch(() => { if (probing === font) probing = ''; });
+  }
+  let uiFaces = [];
+  function applyUiFont() {
+    if (!document.fonts || typeof FontFace !== 'function') return;
+    for (const f of uiFaces) document.fonts.delete(f);
+    uiFaces = [];
+    fontMemo.clear();
+    if (!state.font || !state.faces.length) return;
+    for (const family of F.UI_FAMILIES) {
+      for (const { weight, italic, name } of state.faces) {
+        const face = new FontFace(family, 'local("' + name + '")', { weight: String(weight), style: italic ? 'italic' : 'normal' });
+        document.fonts.add(face);
+        uiFaces.push(face);
+        face.load().catch(() => { /* not installed here: Google's own face stays in charge */ });
+      }
+    }
+  }
+  if (F && state.font) { state.faces = cachedFaces(state.font); applyUiFont(); refreshFaces(); }
+
   // ---------- the in-cell editor: show it in the dark version of the cell it edits ----------
   // Sheets paints the editor as DOM with inline colours (the cell's fill + text colour). We map them
   // through the same grid roles and hand them to ui.css as custom properties.
@@ -343,13 +424,19 @@
     if (fg && parseColor(fg)) set('--nc-edit-fg', remap('grid', 'fg', fg));
   }
   const EDITOR = '.input-box, #waffle-rich-text-editor';
+  // With a chosen font the editor matches the grid (ui.css), except over monospace cells, which
+  // keep their font on the canvas too.
+  const editorFont = (el) => {
+    const keep = !!(F && F.isMono(el.style.fontFamily));
+    if (el.hasAttribute('data-nc-keep-font') !== keep) el.toggleAttribute('data-nc-keep-font', keep);
+  };
   const editorObs = new MutationObserver((muts) => {
-    for (const m of muts) if (m.target.matches && m.target.matches(EDITOR)) themeEditor(m.target);
+    for (const m of muts) if (m.target.matches && m.target.matches(EDITOR)) { themeEditor(m.target); editorFont(m.target); }
   });
   const watchEditor = (root) => {
     if (!root || root.nodeType !== 1) return;
     const hits = root.matches(EDITOR) ? [root] : [...root.querySelectorAll(EDITOR)];
-    for (const el of hits) { themeEditor(el); editorObs.observe(el, { attributes: true, attributeFilter: ['style'] }); }
+    for (const el of hits) { themeEditor(el); editorFont(el); editorObs.observe(el, { attributes: true, attributeFilter: ['style'] }); }
   };
   const bootEditorWatch = () => {
     watchEditor(document.body);
@@ -361,12 +448,14 @@
   // ---------- talk to the isolated-world bridge ----------
   document.addEventListener('nightcell:set', (e) => {
     const next = pickState((e && e.detail) || {});
-    const changed = Object.keys(next).some((k) => next[k] !== state[k]);
+    const before = fontKey(state);
+    const changed = ['on', 'theme', 'chartColors'].some((k) => k in next && next[k] !== state[k]);
     Object.assign(state, next);
     applyRootAttrs();
     if (changed) { cache.clear(); document.querySelectorAll(EDITOR).forEach(themeEditor); }
+    if (F && fontKey(state) !== before) { state.faces = cachedFaces(state.font); applyUiFont(); refreshFaces(); }
   });
 
-  window.__nightcellEngine = { version: '1.0.0', state: () => ({ ...state }), remap };
+  window.__nightcellEngine = { version: '1.1.0', state: () => ({ ...state }), remap, rewriteFont: (v) => (F && state.font ? F.rewriteFont(v, state.font) : v) };
   document.dispatchEvent(new CustomEvent('nightcell:engine-ready', { detail: { ...state } }));
 })();

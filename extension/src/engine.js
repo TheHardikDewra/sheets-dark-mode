@@ -255,19 +255,34 @@
       try { return fn.apply(this, args); } finally { setS.call(this, orig); }
     };
 
-    // Learn the usual row height on each grid canvas from default (white) cell backgrounds.
-    // Sheets paints rows at full height and clips, so a coloured rect clearly shorter than a row
-    // is a data mark (sparkline bar), not a cell fill.
+    // A coloured rect clearly shorter than a row is a data mark (a sparkline bar), not a cell fill.
+    // The row height is learned per grid canvas from the white cell backgrounds Sheets paints, as
+    // the SMALLEST height it paints often, never the most common one: frozen rows are repainted on
+    // every scroll, so a tall frozen title row can outnumber normal rows, and then every ordinary
+    // cell fill looks like a mark and turns light. A learned height may drop at once (zoom out)
+    // but only rises after it has gone unpainted for a long stretch: too high a row height
+    // recolours real cells, too low only leaves some bars dark.
     const rowStats = new WeakMap();
     const learnRow = (cv, h) => {
-      let st = rowStats.get(cv);
-      if (!st) { st = { counts: new Map(), mode: 0, best: 0, seen: 0 }; rowStats.set(cv, st); }
       h = Math.round(h);
       if (h < 12 || h > 400) return;
+      let st = rowStats.get(cv);
+      if (!st) { st = { counts: new Map(), seen: 0, row: 0, rowSeen: 0 }; rowStats.set(cv, st); }
       const c = (st.counts.get(h) || 0) + 1;
       st.counts.set(h, c);
-      if (c > st.best) { st.best = c; st.mode = h; }
-      if (++st.seen > 4000) { st.counts.clear(); st.best = 0; st.seen = 0; } // let it re-learn after zoom changes
+      st.seen++;
+      if (h === st.row) st.rowSeen = st.seen;
+      else if (c >= 3 && (!st.row || h < st.row)) { st.row = h; st.rowSeen = st.seen; }
+      if (st.seen % 256 === 0) for (const [k, v] of st.counts) { if (v < 2) st.counts.delete(k); else st.counts.set(k, v >> 1); }
+      if (st.seen - st.rowSeen > 2000) { // zoomed in or rows resized: take the smallest height still common
+        let row = 0;
+        for (const [k, v] of st.counts) if (v >= 3 && (!row || k < row)) row = k;
+        st.row = row; st.rowSeen = st.seen;
+      }
+    };
+    const isMark = (cv, w, h) => {
+      const st = rowStats.get(cv);
+      return !!st && st.row > 0 && Math.round(h) <= st.row - 6 && w < 600;
     };
     const isLight = (style) => {
       const c = parseColor(style);
@@ -285,9 +300,7 @@
       }
       if (pol !== 'grid') return 'bg';
       if (style === '#ffffff') { learnRow(this.canvas, h); return 'bg'; }
-      const st = rowStats.get(this.canvas);
-      if (st && st.best >= 4 && h <= st.mode - 6 && w < 600 && !isLight(style)) return 'mark';
-      return 'bg';
+      return !isLight(style) && isMark(this.canvas, w, h) ? 'mark' : 'bg';
     };
     // path fills: neutral dark shapes are glyphs (checkbox, arrows) -> lift; others are surfaces -> darken
     const roleCache = new Map();

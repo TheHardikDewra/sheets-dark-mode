@@ -47,6 +47,16 @@ try {
   const bar = await rgb(page, 'grid', 615, 150); check('sparkline-like bar is lifted (visible)', lum(bar) > 0.35, bar.join());
   const series = await rgb(page, 'chart', 60, 120); check('chart series colour kept', series.join() === '66,133,244', series.join());
   const cbg = await rgb(page, 'chart', 200, 20); check('chart background darkened', lum(cbg) < 0.03, cbg.join());
+  // while scrolling, Sheets repaints only the frozen rows, so a tall white title row is painted
+  // far more often than normal rows; a dark cell fill at normal row height must still stay a fill
+  await page.evaluate(() => {
+    const g = document.getElementById('grid').getContext('2d');
+    for (let i = 0; i < 300; i++) { g.fillStyle = '#ffffff'; g.fillRect(0, 0, 800, 50); }
+    g.fillStyle = '#2563eb'; g.fillRect(0, 127, 300, 40);
+  });
+  const fill = await rgb(page, 'grid', 150, 150);
+  check('dark cell fill stays dark after frozen-row repaints', lum(fill) < 0.05 && fill[2] > fill[0], fill.join());
+  await page.evaluate(() => dispatchEvent(new Event('resize'))); // repaint the mock as it was
   const tb = await page.evaluate(() => getComputedStyle(document.getElementById('docs-toolbar-wrapper')).backgroundColor);
   check('toolbar CSS applied', tb === 'rgb(36, 36, 36)', tb);
 

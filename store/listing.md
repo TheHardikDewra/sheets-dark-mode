@@ -100,10 +100,13 @@ No account or setup needed beyond any Google account. Open any Google Sheet (for
 ## Hardik's steps (the parts only you can do)
 
 1. Open https://chrome.google.com/webstore/devconsole with the Google account you want as the
-   publisher, accept the developer agreement and pay the one-time $5 registration fee.
-2. Fill in the account details. Google asks whether you are a trader under EU law: if you
-   declare as a trader, your verified contact details are shown on the listing. That call is
-   yours.
+   publisher, accept the developer agreement and pay the registration fee. Google's register
+   page confirms it is one-time and covers every item you publish; the amount has been US$5 since
+   the fee was introduced (Google's page does not print it, so check the checkout screen).
+2. Fill in the account details. Google asks whether you are a trader under EU law. Traders give
+   Google their legal name and contact details, and that verified information is shown to store
+   users. Non-traders get a notice on the listing that EU consumer-protection rights do not apply.
+   That call is yours ([policy](https://developer.chrome.com/docs/webstore/program-policies/trader-disclosure)).
 3. Click **New item**, upload `dist/nightcell-1.0.0.zip`.
 4. Paste the store listing, privacy and distribution fields above, upload the icon and images.
 5. Click **Submit for review**. Google reviews it before it goes live, and the review time varies.

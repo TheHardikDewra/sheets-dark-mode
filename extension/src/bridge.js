@@ -88,28 +88,74 @@
   const luma = (c) => (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255;
   const SKIP = 'canvas, img, svg, video, iframe, [data-nightcell-skip], .docs-toolbar-color-menu-button-color-bar, .goog-palette-cell, [class*="color-bar"], [class*="swatch"]';
   const SIDES = ['Top', 'Right', 'Bottom', 'Left'];
+  const MARKS = ['data-nc-surface', 'data-nc-hue', 'data-nc-text', 'data-nc-border']; // never class/style: observers ignore these
 
-  function sweep(root) {
-    if (!current.on || !root || root.nodeType !== 1) return;
-    const nodes = [root, ...root.querySelectorAll('*')];
-    if (nodes.length > 4000) return; // never walk the whole app
-    for (const el of nodes) {
-      if (el.matches(SKIP) || el.closest('[id$="grid-table-container"]')) continue;
-      const cs = getComputedStyle(el);
-      if (cs.display === 'none') continue;
-      const bg = parse(cs.backgroundColor);
-      if (bg && bg[3] > 0.5 && luma(bg) > 0.82 && !el.hasAttribute('data-nc-surface')) {
-        el.setAttribute('data-nc-surface', el.matches('input, textarea, select, [contenteditable="true"]') ? 'input' : '1');
-      }
-      const fg = parse(cs.color);
-      if (fg && luma(fg) < 0.45 && !el.hasAttribute('data-nc-text')) el.setAttribute('data-nc-text', luma(fg) > 0.3 ? 'muted' : '1');
-      // Light hairlines (accordion rows, cards) read as white outlines on a dark surface.
-      if (!el.hasAttribute('data-nc-border') && SIDES.some((s) => {
-        if (!(parseFloat(cs['border' + s + 'Width']) > 0)) return false;
-        const c = parse(cs['border' + s + 'Color']);
-        return c && c[3] > 0.3 && luma(c) > 0.75;
-      })) el.setAttribute('data-nc-border', '1');
+  // A light surface becomes a dark one of the same kind: white -> raised, light grey -> one step
+  // lighter (chips, hover), a light tint -> a dark surface of the same hue (a green selected tab
+  // stays green), and a fill only a pixel or two thick is a divider, so it takes the border colour.
+  function surfaceKind(el, bg) {
+    if (el.matches('input, textarea, select, [contenteditable="true"]')) return 'input';
+    if (el.tagName === 'HR' || el.offsetHeight <= 2 || el.offsetWidth <= 2) return 'line';
+    if (Math.max(bg[0], bg[1], bg[2]) - Math.min(bg[0], bg[1], bg[2]) >= 6) return 'tone';
+    return luma(bg) >= 0.975 ? '1' : 'tonal';
+  }
+  const hueBucket = ([r, g, b]) => { // 12 buckets of 30 degrees, matched by rules in ui.css
+    const max = Math.max(r, g, b), d = max - Math.min(r, g, b);
+    if (!d) return 0;
+    const h = max === r ? ((g - b) / d + 6) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    return Math.round(h * 2) % 12;
+  };
+
+  // The marks an element needs, judged from its own colours as Sheets styles it right now.
+  function decide(el) {
+    const cs = getComputedStyle(el);
+    const out = [];
+    const bg = parse(cs.backgroundColor);
+    if (bg && bg[3] > 0.5 && luma(bg) > 0.82) {
+      const kind = surfaceKind(el, bg);
+      out.push(['data-nc-surface', kind]);
+      if (kind === 'tone') out.push(['data-nc-hue', String(hueBucket(bg))]);
     }
+    const fg = parse(cs.color);
+    if (fg && luma(fg) < 0.45) out.push(['data-nc-text', luma(fg) > 0.26 ? 'muted' : '1']); // #444746 and lighter = secondary
+    // Light hairlines (accordion rows, cards) read as white outlines on a dark surface.
+    if (SIDES.some((s) => {
+      if (!(parseFloat(cs['border' + s + 'Width']) > 0)) return false;
+      const c = parse(cs['border' + s + 'Color']);
+      return c && c[3] > 0.3 && luma(c) > 0.75;
+    })) out.push(['data-nc-border', '1']);
+    return out;
+  }
+
+  // Marks are always worked out from scratch: they come off, colours are read, they go back on.
+  // Hover, selection and expanded states change an element's colours, and a mark has to follow
+  // the state rather than keep the first one it saw. All of it runs inside one task, so nothing
+  // paints in between. While reading, transitions are frozen (data-nc-measure, see ui.css):
+  // Sheets fades some colours, and a colour caught mid-fade would be judged wrongly. The freeze is
+  // an attribute rather than an inline style, so it never wakes the class/style observers.
+  function remarkAll(root, els) {
+    root.setAttribute('data-nc-measure', '');
+    for (const el of els) MARKS.forEach((a) => el.removeAttribute(a));
+    const plan = els.map(decide);
+    els.forEach((el, i) => { for (const [a, v] of plan[i]) el.setAttribute(a, v); });
+    for (const el of els) void getComputedStyle(el).color; // land the new colours while frozen
+    root.removeAttribute('data-nc-measure');
+  }
+  function remark(el) {
+    if (current.on && el.isConnected && !el.matches(SKIP)) remarkAll(el, [el]);
+  }
+
+  // Walks only what is rendered: a hidden subtree is skipped whole and swept when it is shown.
+  // The chart editor alone keeps ~4,400 nodes, of which ~200 are visible at a time.
+  const rejectHidden = (el) => (el.matches(SKIP) || /grid-table-container$/.test(el.id) || getComputedStyle(el).display === 'none'
+    ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT);
+  function sweep(root) {
+    if (!current.on || !root || root.nodeType !== 1 || !root.isConnected) return;
+    if (rejectHidden(root) === NodeFilter.FILTER_REJECT || root.closest('[id$="grid-table-container"]')) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, { acceptNode: rejectHidden });
+    const els = [];
+    for (let el = root; el && els.length < 3000; el = walker.nextNode()) els.push(el); // never walk the whole app
+    remarkAll(root, els);
   }
 
   const pending = new Set();
@@ -147,7 +193,7 @@
     const deep = new MutationObserver((muts) => {
       for (const m of muts) {
         if (m.type === 'childList') { for (const n of m.addedNodes) if (n.nodeType === 1) scheduleSweep(n); }
-        else if (m.target.nodeType === 1 && !(m.attributeName || '').startsWith('data-nc')) scheduleSweep(m.target);
+        else if (m.target.nodeType === 1) { remark(m.target); scheduleSweep(m.target); } // marks follow state, before paint
       }
     });
     const adopted = new WeakSet();
@@ -158,9 +204,10 @@
       scheduleSweep(el);
     };
     setInterval(() => {
-      if (!current.on || document.hidden) return;
+      if (!current.on) return;
       for (const el of document.querySelectorAll('[class*="sidebar-container"], [role="complementary"], [role="dialog"], .modal-dialog, .docs-material-dialog')) {
-        if (el.offsetParent !== null && !el.closest('[id$="grid-table-container"]')) adopt(el);
+        // getClientRects, not offsetParent: offsetParent is null for position:fixed dialogs
+        if (el.getClientRects().length && !el.closest('[id$="grid-table-container"]')) adopt(el);
       }
     }, 1500);
     scheduleSweep(document.body.querySelector('#docs-chrome'));

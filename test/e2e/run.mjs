@@ -67,6 +67,48 @@ try {
   check('safety net darkens its light hairlines', net[2] === 'rgb(58, 58, 58)', net[2]);
   await page.evaluate(() => document.getElementById('unknown-popup').remove());
 
+  // a sidebar shaped like the chart editor: thousands of hidden nodes, a white tab bar, a tinted
+  // chip, and a row that only turns light grey while "hovered" (a class), like Closure controls
+  await page.evaluate(() => {
+    const css = document.createElement('style');
+    css.textContent = '.t-row.t-hot { background: #e8eaed } .t-head { color: #fff; transition: color .5s } .t-head.t-open { color: #1f1f1f }';
+    document.head.appendChild(css);
+    const side = document.createElement('div');
+    side.className = 'test-sidebar-container';
+    side.setAttribute('role', 'complementary');
+    side.style.cssText = 'position:fixed;top:60px;right:0;width:300px;height:400px;background:#fff;color:#1f1f1f';
+    const hidden = document.createElement('div');
+    hidden.style.display = 'none';
+    hidden.innerHTML = '<div><span>x</span></div>'.repeat(2500);
+    side.innerHTML = '<div id="t-tabs" style="background:#fff;padding:6px"><span id="t-tab-label" style="color:#444746">Customize</span></div>'
+      + '<div id="t-chip" style="background:#f0f4f9;border-radius:12px;padding:6px">A4:A16</div>'
+      + '<div id="t-row" class="t-row" style="padding:6px">Legend</div>'
+      + '<div id="t-head" class="t-head" style="padding:6px">Gridlines and ticks</div>';
+    side.appendChild(hidden);
+    document.body.appendChild(side);
+  });
+  await sleep(2500); // adoption runs every 1.5 s
+  const big = await page.evaluate(() => {
+    const cs = (id) => getComputedStyle(document.getElementById(id));
+    return { nodes: document.querySelector('.test-sidebar-container').querySelectorAll('*').length,
+      tabs: cs('t-tabs').backgroundColor, label: cs('t-tab-label').color, chip: cs('t-chip').backgroundColor };
+  });
+  const chip = big.chip.match(/\d+/g).map(Number);
+  check('sidebar with 5,000+ mostly hidden nodes is still darkened', big.nodes > 4000 && big.tabs === 'rgb(36, 36, 36)' && big.label === 'rgb(180, 180, 180)', `${big.nodes} nodes, ${big.tabs}, ${big.label}`);
+  check('tinted chip keeps its hue as a dark surface', lum(chip) < 0.04 && chip[2] > chip[0] && big.chip !== 'rgb(36, 36, 36)', big.chip);
+  await page.evaluate(() => document.getElementById('t-row').classList.add('t-hot'));
+  await sleep(100);
+  const hot = await page.evaluate(() => getComputedStyle(document.getElementById('t-row')).backgroundColor);
+  await page.evaluate(() => document.getElementById('t-row').classList.remove('t-hot'));
+  await sleep(100);
+  const cold = await page.evaluate(() => getComputedStyle(document.getElementById('t-row')).backgroundColor);
+  check('hover state darkens while on, then lets go', hot === 'rgb(42, 42, 42)' && cold === 'rgba(0, 0, 0, 0)', `${hot} -> ${cold}`);
+  await page.evaluate(() => document.getElementById('t-head').classList.add('t-open'));
+  await sleep(900); // longer than the 0.5 s fade
+  const faded = await page.evaluate(() => getComputedStyle(document.getElementById('t-head')).color);
+  check('text that fades to dark is read where it lands', faded === 'rgb(228, 228, 228)', faded);
+  await page.evaluate(() => document.querySelector('.test-sidebar-container').remove());
+
   // popup: switch theme -> page follows and repaints (zoom nudge -> real resize)
   const paintsBefore = await page.evaluate(() => window.__paints);
   const popup = await browser.newPage();

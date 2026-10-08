@@ -70,14 +70,14 @@ function buildDemo() {
 
   // charts
   const data = sh.getRange(4, 1, rows.length + 1, 5);
-  sh.insertChart(sh.newChart().asColumnChart().addRange(data).setStacked().setPosition(29, 1, 0, 0)
+  sh.insertChart(sh.newChart().asColumnChart().addRange(data).setNumHeaders(1).setStacked().setPosition(29, 1, 0, 0)
     .setOption('title', 'Spend by month').setOption('width', 620).setOption('height', 340).build());
   sh.insertChart(sh.newChart().asPieChart().addRange(sh.getRange(4, 2, 1, 4)).addRange(sh.getRange(last + 1, 2, 1, 4))
-    .setTransposeRowsAndColumns(true).setOption('pieHole', 0.5).setOption('title', 'Share of spend')
+    .setTransposeRowsAndColumns(true).setNumHeaders(1).setOption('pieHole', 0.5).setOption('title', 'Share of spend')
     .setPosition(29, 7, 0, 0).setOption('width', 420).setOption('height', 340).build());
-  sh.insertChart(sh.newChart().asLineChart().addRange(sh.getRange(4, 1, rows.length + 1, 1)).addRange(sh.getRange(4, 6, rows.length + 1, 1))
+  sh.insertChart(sh.newChart().asLineChart().addRange(sh.getRange(4, 1, rows.length + 1, 1)).addRange(sh.getRange(4, 6, rows.length + 1, 1)).setNumHeaders(1)
     .setOption('title', 'Total per month').setPosition(47, 1, 0, 0).setOption('width', 620).setOption('height', 300).build());
-  sh.insertChart(sh.newChart().asBarChart().addRange(data).setPosition(47, 7, 0, 0)
+  sh.insertChart(sh.newChart().asBarChart().addRange(data).setNumHeaders(1).setPosition(47, 7, 0, 0)
     .setOption('title', 'Category bars').setOption('width', 420).setOption('height', 300).build());
   return 'demo built';
 }

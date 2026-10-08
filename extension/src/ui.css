@@ -9,6 +9,7 @@ html[data-nightcell="on"] {
   --nc-bg: #1e1e1e;
   --nc-raised: #242424;
   --nc-input: #2a2a2a;
+  --nc-tone-l: 17%;
   --nc-hover: #333333;
   --nc-active: #3d3d3d;
   --nc-border: #3a3a3a;
@@ -28,6 +29,7 @@ html[data-nightcell="on"][data-nightcell-theme="midnight"] {
   --nc-bg: #1a1f29;
   --nc-raised: #202633;
   --nc-input: #262d3b;
+  --nc-tone-l: 18%;
   --nc-hover: #2e3647;
   --nc-active: #384154;
   --nc-border: #333b4d;
@@ -40,6 +42,7 @@ html[data-nightcell="on"][data-nightcell-theme="oled"] {
   --nc-bg: #0b0b0b;
   --nc-raised: #121212;
   --nc-input: #181818;
+  --nc-tone-l: 10%;
   --nc-hover: #222222;
   --nc-active: #2c2c2c;
   --nc-border: #2a2a2a;
@@ -49,6 +52,7 @@ html[data-nightcell="on"][data-nightcell-theme="dim"] {
   --nc-bg: #2b2d31;
   --nc-raised: #313338;
   --nc-input: #383a40;
+  --nc-tone-l: 24%;
   --nc-hover: #404249;
   --nc-active: #4a4c53;
   --nc-border: #45474e;
@@ -414,7 +418,25 @@ html[data-nightcell="on"] [data-nc-surface] {
   border-color: var(--nc-border) !important;
 }
 html[data-nightcell="on"] [data-nc-surface="input"] { background-color: var(--nc-input) !important; }
+html[data-nightcell="on"] [data-nc-surface="tonal"] { background-color: var(--nc-input) !important; }
+html[data-nightcell="on"] [data-nc-surface="line"] { background-color: var(--nc-border) !important; }
+/* a light tint keeps its hue as a dark surface: hue bucket from bridge.js, lightness from the theme */
+html[data-nightcell="on"] [data-nc-surface="tone"] { background-color: hsl(var(--nc-tone-h, 0) 22% var(--nc-tone-l)) !important; }
+html[data-nightcell="on"] [data-nc-hue="0"] { --nc-tone-h: 0; }
+html[data-nightcell="on"] [data-nc-hue="1"] { --nc-tone-h: 30; }
+html[data-nightcell="on"] [data-nc-hue="2"] { --nc-tone-h: 60; }
+html[data-nightcell="on"] [data-nc-hue="3"] { --nc-tone-h: 90; }
+html[data-nightcell="on"] [data-nc-hue="4"] { --nc-tone-h: 120; }
+html[data-nightcell="on"] [data-nc-hue="5"] { --nc-tone-h: 150; }
+html[data-nightcell="on"] [data-nc-hue="6"] { --nc-tone-h: 180; }
+html[data-nightcell="on"] [data-nc-hue="7"] { --nc-tone-h: 210; }
+html[data-nightcell="on"] [data-nc-hue="8"] { --nc-tone-h: 240; }
+html[data-nightcell="on"] [data-nc-hue="9"] { --nc-tone-h: 270; }
+html[data-nightcell="on"] [data-nc-hue="10"] { --nc-tone-h: 300; }
+html[data-nightcell="on"] [data-nc-hue="11"] { --nc-tone-h: 330; }
 html[data-nightcell="on"] [data-nc-border] { border-color: var(--nc-border) !important; }
+/* set for a moment while bridge.js reads colours, so a fading colour is read where it lands */
+[data-nc-measure], [data-nc-measure] * { transition: none !important; }
 html[data-nightcell="on"] [data-nc-text] { color: var(--nc-text) !important; }
 html[data-nightcell="on"] [data-nc-text="muted"] { color: var(--nc-text-2) !important; }
 html[data-nightcell="on"] [data-nc-icon] { filter: var(--nc-icon-filter) !important; }

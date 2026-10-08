@@ -9,6 +9,8 @@ swapped for a dark-theme version at the moment it is drawn, and the hue is kept:
 yellow row becomes a deep amber row, red negatives stay red, and text is lifted until it is
 readable on whatever cell it sits on.
 
+**Site and download:** [nightcell-sheets.vercel.app](https://nightcell-sheets.vercel.app)
+
 <p align="center">
   <img src="store/screenshot-1-grid.png" width="840" alt="Nightcell: a budget sheet in Graphite dark, coloured cells and charts intact">
 </p>
@@ -28,9 +30,10 @@ readable on whatever cell it sits on.
 
 ## Install (local, while it is in review)
 
-1. Download this repo (Code -> Download ZIP) and unzip it, or `git clone` it.
+1. Download [nightcell.zip](https://nightcell-sheets.vercel.app/nightcell.zip) and unzip it
+   (or clone this repo and use its `extension` folder).
 2. Open `chrome://extensions` and switch on **Developer mode** (top right).
-3. Click **Load unpacked** and choose the `extension` folder.
+3. Click **Load unpacked** and choose the unzipped `nightcell` folder.
 4. Open any Google Sheet. It is dark already. Pin the moon icon from Chrome's puzzle-piece menu
    to reach the settings.
 
@@ -92,7 +95,8 @@ merged cells, four chart types) for visual testing. All screenshots use that she
 - `storage`: saves your theme and per-sheet choices with `chrome.storage.sync`.
 - Host access to `https://docs.google.com/spreadsheets/*` only, to run the theme there.
 - Nightcell never reads, stores or sends your spreadsheet content. It makes no network requests
-  at all. See [PRIVACY.md](PRIVACY.md).
+  at all. See [PRIVACY.md](PRIVACY.md), also published at
+  [nightcell-sheets.vercel.app/privacy](https://nightcell-sheets.vercel.app/privacy).
 
 ## Known limits
 

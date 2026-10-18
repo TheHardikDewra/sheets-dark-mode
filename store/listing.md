@@ -104,12 +104,10 @@ No account or setup needed beyond any Google account. Open any Google Sheet (for
 
 1. Developer account: done on 18 Oct 2026 (publisher name Hardik Dewra, non-trader).
    New publishers can have two published extensions; this is one.
-2. Check that 2-Step Verification is On for that Google account. Google requires it before you can
-   publish or update an item.
-3. Click **New item** and upload `dist/dark-mode-for-google-sheets-1.1.0.zip` (run
-   `zsh scripts/build-zip.sh` first). Wait for the automated checks on the upload to finish.
-4. Paste the store listing, privacy and distribution fields above, upload the icon and images.
-5. Click **Submit for review**, once. Cancelling and resubmitting puts the item back at the end of
-   the review queue.
-6. When it is live, swap the site's download buttons for the store link and update the
+2. Submitted for review on 19 Oct 2026, set to publish automatically once it passes. Google emails
+   the result. Don't cancel and resubmit: that puts the item back at the end of the review queue.
+3. When it is live, swap the site's download buttons for the store link and update the
    "Not on the Chrome Web Store yet" line in `site/index.html`.
+
+For a later version: raise `version` in `extension/manifest.json`, run `zsh scripts/build-zip.sh`,
+upload the zip under Package > Upload new package, then click Submit for review.

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Nightcell: Dark Mode for Google Sheets",
-  "short_name": "Nightcell",
+  "name": "Dark Mode for Google Sheets™",
+  "short_name": "Dark Mode",
   "version": "1.1.0",
   "description": "A real dark mode for Google Sheets. Cells, charts and menus go dark, cell colours stay readable, and any installed font works.",
   "icons": {
@@ -11,7 +11,7 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_title": "Nightcell",
+    "default_title": "Dark Mode for Google Sheets™",
     "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "icons/icon16.png",

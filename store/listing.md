@@ -1,26 +1,26 @@
-# Chrome Web Store listing: Nightcell
+# Chrome Web Store listing: Dark Mode for Google Sheets
 
 Everything the Developer Dashboard asks for, ready to paste. The upload is
-`dist/nightcell-1.1.0.zip` (run `zsh scripts/build-zip.sh` first; it also refreshes the copy the
-site serves at `/nightcell.zip`).
+`dist/dark-mode-for-google-sheets-1.1.0.zip` (run `zsh scripts/build-zip.sh` first; it also refreshes the
+copy the site serves at `/dark-mode-for-google-sheets.zip`).
 
 ## Package
 
 | Field | Value |
 |---|---|
-| Name (from the manifest) | Nightcell: Dark Mode for Google Sheets |
+| Name (from the manifest) | Dark Mode for Google Sheets™ |
 | Summary (manifest `description`, 126 of 132 characters) | A real dark mode for Google Sheets. Cells, charts and menus go dark, cell colours stay readable, and any installed font works. |
 | Version | 1.1.0 |
-| Upload | `dist/nightcell-1.1.0.zip` |
+| Upload | `dist/dark-mode-for-google-sheets-1.1.0.zip` |
 
 ## Store listing tab
 
 **Description** (plain text, paste as is):
 
 ```
-Google Sheets on the web still has no dark mode. Many dark-mode extensions invert the page, so a red total turns cyan, a green row turns purple and charts go photo-negative.
+Google Sheets™ on the web still has no dark mode. Many dark-mode extensions invert the page, so a red total turns cyan, a green row turns purple and charts go photo-negative.
 
-Nightcell repaints the grid as Sheets draws it. Each colour keeps its hue and moves into the dark: a pastel yellow row becomes deep amber, red negatives stay red, and text is lifted until it reads on whatever cell it sits on. All 180 fill and text pairs in our test suite read at 5:1 contrast or better, in every theme.
+This extension repaints the grid as Sheets draws it. Each colour keeps its hue and moves into the dark: a pastel yellow row becomes deep amber, red negatives stay red, and text is lifted until it reads on whatever cell it sits on. All 180 fill and text pairs in our test suite read at 5:1 contrast or better, in every theme.
 
 WHAT GOES DARK
 • The cell grid: fills, conditional formatting, banding, checkboxes, dropdown chips and sparklines
@@ -38,9 +38,11 @@ NOTHING ELSE CHANGES
 Your file is untouched. Collaborators see the normal sheet, colour pickers show the real colours, and printing or PDF export stays light.
 
 PRIVATE BY DESIGN
-No servers, no analytics, no network requests. Nightcell never reads, stores or sends what is in your cells. It runs only on docs.google.com/spreadsheets and asks for one permission, storage, to remember your settings.
+No servers, no analytics, no network requests. The extension never reads, stores or sends what is in your cells. It runs only on docs.google.com/spreadsheets and asks for one permission, storage, to remember your settings.
 
 Free and open source (MIT): https://github.com/TheHardikDewra/sheets-dark-mode
+
+Google Sheets is a trademark of Google LLC. Use of this trademark is subject to Google Permissions. This extension is independent and is not made or endorsed by Google.
 ```
 
 | Field | Value |
@@ -63,19 +65,19 @@ Every screenshot comes from the fake-data demo sheet built by `test/demo-sheet.g
 **Single purpose:**
 
 ```
-Nightcell changes how Google Sheets looks on your screen: a dark theme for the spreadsheet grid, charts and interface, and optionally a font installed on your computer.
+This extension changes how Google Sheets looks on your screen: a dark theme for the spreadsheet grid, charts and interface, and optionally a font installed on your computer.
 ```
 
 **Permission justifications:**
 
 | Permission | Justification (paste) |
 |---|---|
-| `storage` | Saves the user's own settings (on or off, theme, chart colour mode, follow system appearance, the list of sheets kept light or dark, and the name of a chosen font) with chrome.storage.sync. Nothing else is stored. |
+| `storage` | Saves the user's own settings (on or off, theme, chart colour mode, follow system appearance, the list of sheets kept light or dark, and the name of a chosen font) with chrome.storage.sync. Nothing else is stored in chrome.storage. |
 | Host permission `https://docs.google.com/spreadsheets/*` | The content scripts that apply the dark theme run only on Google Sheets pages. They recolour what Sheets draws and style the Sheets interface. No other site is accessed. |
 
 **Remote code:** No, I am not using remote code. Every script ships inside the package.
 
-**Data usage:** tick none of the data types. Nightcell collects no user data. Then tick all three
+**Data usage:** tick none of the data types. The extension collects no user data. Then tick all three
 certifications:
 
 - I do not sell or transfer user data to third parties, apart from the approved use cases
@@ -100,16 +102,14 @@ No account or setup needed beyond any Google account. Open any Google Sheet (for
 
 ## Hardik's steps (the parts only you can do)
 
-1. Open https://chrome.google.com/webstore/devconsole with the Google account you want as the
-   publisher, accept the developer agreement and pay the registration fee. Google's register
-   page confirms it is one-time and covers every item you publish; the amount has been US$5 since
-   the fee was introduced (Google's page does not print it, so check the checkout screen).
-2. Fill in the account details. Google asks whether you are a trader under EU law. Traders give
-   Google their legal name and contact details, and that verified information is shown to store
-   users. Non-traders get a notice on the listing that EU consumer-protection rights do not apply.
-   That call is yours ([policy](https://developer.chrome.com/docs/webstore/program-policies/trader-disclosure)).
-3. Click **New item**, upload `dist/nightcell-1.1.0.zip`.
+1. Developer account: done on 18 Oct 2026 (publisher name Hardik Dewra, non-trader).
+   New publishers can have two published extensions; this is one.
+2. Check that 2-Step Verification is On for that Google account. Google requires it before you can
+   publish or update an item.
+3. Click **New item** and upload `dist/dark-mode-for-google-sheets-1.1.0.zip` (run
+   `zsh scripts/build-zip.sh` first). Wait for the automated checks on the upload to finish.
 4. Paste the store listing, privacy and distribution fields above, upload the icon and images.
-5. Click **Submit for review**. Google reviews it before it goes live, and the review time varies.
+5. Click **Submit for review**, once. Cancelling and resubmitting puts the item back at the end of
+   the review queue.
 6. When it is live, swap the site's download buttons for the store link and update the
    "Not on the Chrome Web Store yet" line in `site/index.html`.

@@ -2,6 +2,16 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/fonts/:path*", "destination": "https://wdlp-fonts.vercel.app/:path*" }
+    {
+      "source": "/fonts/:path*",
+      "destination": "https://wdlp-fonts.vercel.app/:path*"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/nightcell.zip",
+      "destination": "/dark-mode-for-google-sheets.zip",
+      "permanent": true
+    }
   ]
 }

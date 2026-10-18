@@ -6,7 +6,7 @@
  */
 function buildDemo() {
   const ss = SpreadsheetApp.getActive();
-  ss.rename('Nightcell demo (fake data)');
+  ss.rename('Studio budget (fake data)');
   let sh = ss.getSheets()[0];
   sh.setName('Budget');
   sh.clear(); sh.clearConditionalFormatRules();

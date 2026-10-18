@@ -70,6 +70,10 @@ h1, h2, h3 { text-wrap: balance; }
 .nav.scrolled { border-bottom-color: var(--line); }
 .nav-in { display: flex; align-items: center; gap: 28px; height: 68px; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 18px; letter-spacing: -0.01em; text-decoration: none; }
+@media (max-width: 480px) {
+  .brand-name { display: flex; flex-direction: column; line-height: 1.15; }
+  .brand-for { font-size: 13px; font-weight: 400; letter-spacing: 0; color: var(--text-2); }
+}
 .links { display: flex; gap: 24px; margin-left: 8px; font-size: 15px; }
 .links a, .gh { color: var(--text-2); text-decoration: none; transition: color .2s; }
 .links a:hover, .gh:hover { color: var(--text); }
@@ -346,6 +350,7 @@ h2 { font-size: clamp(28px, 3.8vw, 46px); line-height: 1.1; letter-spacing: -0.0
 .doc h2 { font-size: 24px; margin: 44px 0 10px; }
 .doc p, .doc li { color: var(--text-2); }
 .doc .updated { color: var(--text-3); margin-top: 14px; }
+.doc code { white-space: normal; overflow-wrap: anywhere; }
 .lost { padding-block: 96px 120px; max-width: 760px; }
 .lost .err { font: 400 clamp(64px, 12vw, 132px)/1 var(--mono); color: var(--accent); letter-spacing: -0.04em; margin: 0 0 18px; }
 .lost .ctas { margin-top: 28px; }

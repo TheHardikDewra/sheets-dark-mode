@@ -73,7 +73,7 @@ for (const t of THEMES) {
 }
 
 const manifest = JSON.parse(read('extension/manifest.json'));
-const zip = path.join(root, 'site/nightcell.zip');
+const zip = path.join(root, 'site/dark-mode-for-google-sheets.zip');
 const data = {
   version: manifest.version,
   zipKB: Math.round(statSync(zip).size / 1000),

@@ -1,10 +1,10 @@
-# Nightcell: a real dark mode for Google Sheets
+# Dark Mode for Google Sheets
 
 Google Sheets on the web still has no dark mode. The extensions that try to add one mostly
 slap `filter: invert(1)` on the page, so your cell colours turn into their opposites, images go
 negative, charts look radioactive, and the grid flashes white every time it redraws.
 
-Nightcell paints the dark theme **inside the grid's canvas**. Every colour Sheets draws is
+This extension paints the dark theme **inside the grid's canvas**. Every colour Sheets draws is
 swapped for a dark-theme version at the moment it is drawn, and the hue is kept: a pastel
 yellow row becomes a deep amber row, red negatives stay red, and text is lifted until it is
 readable on whatever cell it sits on.
@@ -12,7 +12,7 @@ readable on whatever cell it sits on.
 **Site and download:** [nightcell-sheets.vercel.app](https://nightcell-sheets.vercel.app)
 
 <p align="center">
-  <img src="store/screenshot-1-grid.png" width="840" alt="Nightcell: a budget sheet in Graphite dark, coloured cells and charts intact">
+  <img src="store/screenshot-1-grid.png" width="840" alt="Dark Mode for Google Sheets: a budget sheet in Graphite dark, coloured cells and charts intact">
 </p>
 
 ## What you get
@@ -31,10 +31,10 @@ readable on whatever cell it sits on.
 
 ## Install (local, while it is in review)
 
-1. Download [nightcell.zip](https://nightcell-sheets.vercel.app/nightcell.zip) and unzip it
+1. Download [dark-mode-for-google-sheets.zip](https://nightcell-sheets.vercel.app/dark-mode-for-google-sheets.zip) and unzip it
    (or clone this repo and use its `extension` folder).
 2. Open `chrome://extensions` and switch on **Developer mode** (top right).
-3. Click **Load unpacked** and choose the unzipped `nightcell` folder.
+3. Click **Load unpacked** and choose the unzipped `dark-mode-for-google-sheets` folder.
 4. Open any Google Sheet. It is dark already. Pin the moon icon from Chrome's puzzle-piece menu
    to reach the settings.
 
@@ -67,7 +67,7 @@ background.js                                Alt+Shift+D, and a 1% zoom nudge to
   sets, and Sheets measures with that same font, so column widths and overflow hold. The interface
   gets font faces named Roboto, Google Sans and Arial whose source is `local()`, the copy installed
   on your computer, so Google's own styles never change. Which weights are installed is checked one
-  name at a time with the FontFace API; Nightcell never lists your fonts and bundles none.
+  name at a time with the FontFace API; the extension never lists your fonts and bundles none.
 
 ## Tests
 
@@ -101,7 +101,7 @@ merged cells, four chart types) for visual testing. All screenshots use that she
 
 - `storage`: saves your theme, per-sheet choices and font name with `chrome.storage.sync`.
 - Host access to `https://docs.google.com/spreadsheets/*` only, to run the theme there.
-- Nightcell never reads, stores or sends your spreadsheet content. It makes no network requests
+- The extension never reads, stores or sends your spreadsheet content. It makes no network requests
   at all. See [PRIVACY.md](PRIVACY.md), also published at
   [nightcell-sheets.vercel.app/privacy](https://nightcell-sheets.vercel.app/privacy).
 
